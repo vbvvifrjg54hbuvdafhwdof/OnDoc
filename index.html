@@ -6,113 +6,86 @@
   <title>OnDoc - スラッシュリーディング & 音読管理</title>
 
   <!-- PWA & アプリインストール設定 -->
-  <meta name="theme-color" content="#818cf8" id="theme-color-meta">
+  <meta name="theme-color" content="#6366f1" id="theme-color-meta">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="OnDoc">
 
   <!-- iOS用 Apple Touch Icon -->
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='28' fill='%23818cf8'/><path d='M25 38 C35 32, 45 37, 50 42 C55 37, 65 32, 75 38 L75 68 C65 62, 55 67, 50 72 C45 67, 35 62, 25 68 Z' fill='none' stroke='white' stroke-width='6' stroke-linejoin='round'/><line x1='50' y1='42' x2='50' y2='72' stroke='white' stroke-width='6'/></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='28' fill='%236366f1'/><path d='M25 38 C35 32, 45 37, 50 42 C55 37, 65 32, 75 38 L75 68 C65 62, 55 67, 50 72 C45 67, 35 62, 25 68 Z' fill='none' stroke='white' stroke-width='6' stroke-linejoin='round'/><line x1='50' y1='42' x2='50' y2='72' stroke='white' stroke-width='6'/></svg>">
 
   <!-- PWA Web Manifest -->
   <link rel="manifest" href="./manifest.json">
 
   <!-- SVG Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='28' fill='%23818cf8'/><path d='M25 38 C35 32, 45 37, 50 42 C55 37, 65 32, 75 38 L75 68 C65 62, 55 67, 50 72 C45 67, 35 62, 25 68 Z' fill='none' stroke='white' stroke-width='6' stroke-linejoin='round'/><line x1='50' y1='42' x2='50' y2='72' stroke='white' stroke-width='6'/></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='28' fill='%236366f1'/><path d='M25 38 C35 32, 45 37, 50 42 C55 37, 65 32, 75 38 L75 68 C65 62, 55 67, 50 72 C45 67, 35 62, 25 68 Z' fill='none' stroke='white' stroke-width='6' stroke-linejoin='round'/><line x1='50' y1='42' x2='50' y2='72' stroke='white' stroke-width='6'/></svg>">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   
   <style>
-    /* 淡いパステル調のテーマカラー定義 */
+    /* 白基調 ＆ 調和されたパステルアクセント */
     html[data-theme="indigo"] {
       --brand-primary: #6366f1;
-      --brand-primary-soft: #818cf8;
-      --brand-light: #f0f3ff;
-      --brand-border: #e0e7ff;
-      --brand-text: #4f46e5;
-      --bg-body: #fafbff;
-      --bg-card: #ffffff;
-      --border-card: #eef2ff;
-      --text-main: #334155;
+      --brand-hover: #4f46e5;
+      --brand-soft-bg: #f5f3ff;
+      --brand-soft-border: #ddd6fe;
+      --brand-text: #4338ca;
     }
 
     html[data-theme="mint"] {
-      --brand-primary: #14b8a6;
-      --brand-primary-soft: #2dd4bf;
-      --brand-light: #f0fdfa;
-      --brand-border: #ccfbf1;
-      --brand-text: #0d9488;
-      --bg-body: #f4fbf9;
-      --bg-card: #ffffff;
-      --border-card: #e6f7f3;
-      --text-main: #1f2937;
+      --brand-primary: #0d9488;
+      --brand-hover: #0f766e;
+      --brand-soft-bg: #f0fdf4;
+      --brand-soft-border: #bbf7d0;
+      --brand-text: #0f766e;
     }
 
     html[data-theme="rose"] {
-      --brand-primary: #f43f5e;
-      --brand-primary-soft: #fb7185;
-      --brand-light: #fff1f2;
-      --brand-border: #ffe4e6;
-      --brand-text: #e11d48;
-      --bg-body: #fff7f8;
-      --bg-card: #ffffff;
-      --border-card: #ffeef0;
-      --text-main: #334155;
+      --brand-primary: #e11d48;
+      --brand-hover: #be123c;
+      --brand-soft-bg: #fff1f2;
+      --brand-soft-border: #fecdd3;
+      --brand-text: #be123c;
     }
 
     html[data-theme="amber"] {
-      --brand-primary: #f59e0b;
-      --brand-primary-soft: #fbbf24;
-      --brand-light: #fffbeb;
-      --brand-border: #fef3c7;
-      --brand-text: #d97706;
-      --bg-body: #fffdf5;
-      --bg-card: #ffffff;
-      --border-card: #fef9e7;
-      --text-main: #334155;
-    }
-
-    html[data-theme="dark"] {
-      --brand-primary: #818cf8;
-      --brand-primary-soft: #a5b4fc;
-      --brand-light: #1e293b;
-      --brand-border: #334155;
-      --brand-text: #c7d2fe;
-      --bg-body: #0f172a;
-      --bg-card: #1e293b;
-      --border-card: #334155;
-      --text-main: #f1f5f9;
+      --brand-primary: #d97706;
+      --brand-hover: #b45309;
+      --brand-soft-bg: #fffbeb;
+      --brand-soft-border: #fde68a;
+      --brand-text: #b45309;
     }
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       -webkit-tap-highlight-color: transparent;
-      background-color: var(--bg-body);
-      color: var(--text-main);
-      transition: background-color 0.2s ease, color 0.2s ease;
+      background-color: #f8fafc;
+      color: #1e293b;
     }
 
     .theme-card {
-      background-color: var(--bg-card);
-      border-color: var(--border-card);
+      background-color: #ffffff;
+      border-color: #e2e8f0;
     }
 
-    .theme-brand-bg { background-color: var(--brand-primary-soft) !important; }
+    .theme-brand-bg { background-color: var(--brand-primary) !important; }
+    .theme-brand-bg:hover { background-color: var(--brand-hover) !important; }
     .theme-brand-text { color: var(--brand-text) !important; }
-    .theme-brand-light { background-color: var(--brand-light) !important; }
+    .theme-brand-light { background-color: var(--brand-soft-bg) !important; }
+    .theme-brand-border { border-color: var(--brand-soft-border) !important; }
 
     .font-mono-num { font-family: 'JetBrains Mono', monospace; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     
     .chunk-touch:active {
-      background-color: var(--brand-light) !important;
+      background-color: var(--brand-soft-bg) !important;
     }
 
     /* 英文と和訳の密着レイアウト */
@@ -147,6 +120,7 @@
       word-break: break-word !important;
       overflow-wrap: break-word !important;
       line-height: 1.2 !important;
+      color: #0f172a !important;
     }
 
     .chunk-ja {
@@ -169,17 +143,17 @@
     .slash-mark {
       display: inline-block !important;
       vertical-align: top !important;
-      color: #c7d2fe !important;
+      color: #cbd5e1 !important;
       font-weight: 300 !important;
       margin: 0 2px !important;
       user-select: none !important;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col pb-24 md:pb-6 selection:bg-indigo-100">
+<body class="min-h-screen flex flex-col pb-24 md:pb-6 selection:bg-slate-200">
 
-  <!-- ヘッダー -->
-  <header class="theme-card border-b sticky top-0 z-30 shadow-sm backdrop-blur-md bg-opacity-95">
+  <!-- ヘッダー（白基調） -->
+  <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 shadow-sm">
     <div class="max-w-4xl mx-auto px-3 py-2 flex flex-col gap-2">
       
       <!-- タイトル & 設定歯車 -->
@@ -188,14 +162,14 @@
           <div class="w-8 h-8 theme-brand-bg rounded-xl flex items-center justify-center text-white shadow-sm">
             <i class="fa-solid fa-book-open text-xs"></i>
           </div>
-          <h1 class="text-lg font-black tracking-tight">OnDoc</h1>
-          <button id="btn-pwa-install" class="hidden px-2 py-0.5 theme-brand-bg hover:opacity-90 text-white text-[10px] font-bold rounded-lg shadow-sm transition flex items-center gap-1 active:scale-95">
+          <h1 class="text-lg font-black tracking-tight text-slate-800">OnDoc</h1>
+          <button id="btn-pwa-install" class="hidden px-2 py-0.5 theme-brand-bg text-white text-[10px] font-bold rounded-lg shadow-sm transition flex items-center gap-1 active:scale-95">
             <i class="fa-solid fa-download"></i> アプリ化
           </button>
         </div>
 
         <div class="flex items-center gap-2">
-          <span id="header-folder-tag" class="text-[10px] theme-brand-light theme-brand-text px-2.5 py-0.5 rounded-full font-semibold truncate max-w-[140px]"></span>
+          <span id="header-folder-tag" class="text-[10px] bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full font-semibold truncate max-w-[140px]"></span>
           <button id="btn-open-settings" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition" title="テーマ設定">
             <i class="fa-solid fa-gear text-sm"></i>
           </button>
@@ -204,21 +178,21 @@
 
       <!-- 読解用コントロールバー -->
       <div id="toolbar-controls" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-        <button id="toggle-slash" class="flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 theme-card border shadow-sm">
+        <button id="toggle-slash" class="flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 bg-white border border-slate-200 text-slate-700 shadow-sm">
           <span class="font-bold theme-brand-text">/</span> スラッシュ
         </button>
 
-        <button id="toggle-highlight" class="flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 theme-card border shadow-sm">
-          <span class="w-2 h-2 rounded-full bg-rose-400"></span> 重要語
+        <button id="toggle-highlight" class="flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 bg-white border border-slate-200 text-slate-700 shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-rose-500"></span> 重要語
         </button>
 
-        <div class="flex-shrink-0 flex bg-slate-100/80 p-0.5 rounded-lg text-xs font-semibold border border-slate-200/60">
-          <button id="mode-tap" class="px-2 py-0.5 rounded-md transition theme-card theme-brand-text shadow-sm">タップ</button>
+        <div class="flex-shrink-0 flex bg-slate-100 p-0.5 rounded-lg text-xs font-semibold border border-slate-200">
+          <button id="mode-tap" class="px-2 py-0.5 rounded-md transition bg-white theme-brand-text font-bold shadow-sm">タップ</button>
           <button id="mode-all" class="px-2 py-0.5 rounded-md transition text-slate-500">全表示</button>
           <button id="mode-none" class="px-2 py-0.5 rounded-md transition text-slate-500">隠す</button>
         </div>
 
-        <button id="toggle-raw" class="flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 border border-slate-200 text-slate-600 hover:bg-white">
+        <button id="toggle-raw" class="flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 border border-slate-200 text-slate-600 hover:bg-slate-50">
           <i class="fa-solid fa-leaf text-emerald-500"></i> 白文
         </button>
       </div>
@@ -229,12 +203,12 @@
   <!-- メイン領域 -->
   <main class="flex-1 max-w-4xl w-full mx-auto p-3 md:p-6">
 
-    <!-- VIEW 1: 読解画面（上下ダブルタイマー搭載） -->
-    <section id="view-reader" class="theme-card rounded-2xl p-4 md:p-7 shadow-sm border min-h-[75vh] flex flex-col justify-between space-y-4">
+    <!-- VIEW 1: 読解画面 -->
+    <section id="view-reader" class="bg-white rounded-2xl p-4 md:p-7 shadow-sm border border-slate-200/80 min-h-[75vh] flex flex-col justify-between space-y-4">
       <div>
         <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4 gap-2">
-          <h2 id="current-title" class="text-base md:text-xl font-bold tracking-tight leading-snug"></h2>
-          <button id="btn-open-delete" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition" title="削除">
+          <h2 id="current-title" class="text-base md:text-xl font-bold tracking-tight leading-snug text-slate-800"></h2>
+          <button id="btn-open-delete" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition" title="削除">
             <i class="fa-solid fa-trash-can text-xs"></i>
           </button>
         </div>
@@ -249,9 +223,9 @@
         <div id="reader-timer-bottom" class="timer-box-template mt-6"></div>
 
         <!-- 【下部タイマー直下：音読履歴リスト】 -->
-        <div id="reader-history-section" class="mt-6 pt-4 border-t border-slate-200/60 space-y-3">
+        <div id="reader-history-section" class="mt-6 pt-4 border-t border-slate-100 space-y-3">
           <div class="flex items-center justify-between">
-            <h3 class="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
               <i class="fa-solid fa-clock-rotate-left theme-brand-text"></i> この文章の音読履歴
             </h3>
             <span id="reader-history-count" class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">0件</span>
@@ -267,36 +241,38 @@
     </section>
 
     <!-- VIEW 2: ライブラリ画面 -->
-    <section id="view-library" class="theme-card rounded-2xl p-4 md:p-6 shadow-sm border hidden space-y-5">
+    <section id="view-library" class="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-slate-200/80 hidden space-y-5">
       <div class="flex flex-wrap items-center justify-between border-b border-slate-100 pb-3 gap-2">
-        <h2 class="text-base font-bold">ライブラリ</h2>
+        <h2 class="text-base font-bold text-slate-800">ライブラリ</h2>
         
-        <div class="flex items-center gap-1.5">
+        <div class="flex flex-wrap items-center gap-1.5">
+          <button id="btn-add-simple-text-lib" class="py-1 px-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow-sm transition flex items-center gap-1">
+            <i class="fa-solid fa-plus-circle"></i> 教材追加(JSONなし)
+          </button>
+          <button id="btn-add-root-folder" class="py-1 px-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition flex items-center gap-1">
+            <i class="fa-solid fa-folder-plus text-slate-500"></i> 新規フォルダ
+          </button>
           <button id="btn-export-data" class="py-1 px-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition flex items-center gap-1">
             <i class="fa-solid fa-download theme-brand-text"></i> バックアップ
           </button>
           <button id="btn-import-data" class="py-1 px-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition flex items-center gap-1">
-            <i class="fa-solid fa-upload text-emerald-500"></i> 復元
+            <i class="fa-solid fa-upload text-slate-500"></i> 復元
           </button>
           <input type="file" id="file-input-backup" accept=".json" class="hidden">
-
-          <button id="btn-add-root-folder" class="py-1 px-2.5 theme-brand-light theme-brand-text font-semibold text-xs rounded-lg transition flex items-center gap-1">
-            <i class="fa-solid fa-folder-plus"></i> 新規フォルダ
-          </button>
         </div>
       </div>
 
       <div id="tree-container" class="space-y-1 text-sm"></div>
     </section>
 
-    <!-- VIEW 3: 音読タイマー画面（JSONなし教材専用フォルダツリー対応） -->
+    <!-- VIEW 3: 音読タイマー画面 -->
     <section id="view-timer" class="hidden space-y-4">
-      <!-- 自由音読（外部教材）カード -->
-      <div class="theme-card rounded-2xl p-4 md:p-6 shadow-sm border space-y-4">
+      <!-- アプリ外・登録教材 タイマー本体 -->
+      <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-slate-200/80 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
-          <div>
-            <span id="standalone-active-title" class="text-xs font-bold theme-brand-text block">💡 自由音読モード (市販教材・外部テキスト)</span>
-            <span class="text-[10px] text-slate-400">下記のフォルダツリーからJSONなし登録教材を選択できます</span>
+          <div class="flex-1 min-w-[180px]">
+            <span id="standalone-active-title" class="text-xs font-bold text-slate-800 block">💡 自由音読モード (市販教材・外部テキスト)</span>
+            <span class="text-[10px] text-slate-400">下記のリストから登録した参考書・章を選択できます</span>
           </div>
           <div class="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600">
             <span>語数</span>
@@ -310,7 +286,7 @@
           <div class="flex flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-slate-100 pb-4 md:pb-0">
             <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">現在の音読回数</span>
             <div class="flex items-baseline gap-1">
-              <span id="standalone-read-count" class="text-4xl md:text-5xl font-extrabold theme-brand-text font-mono-num">1</span>
+              <span id="standalone-read-count" class="text-4xl md:text-5xl font-extrabold text-slate-800 font-mono-num">1</span>
               <span class="text-xs font-bold text-slate-400">回目</span>
             </div>
             <div class="flex gap-1.5 mt-3">
@@ -321,14 +297,14 @@
 
           <!-- タイマー -->
           <div class="flex flex-col items-center md:items-end">
-            <div id="standalone-timer-display" class="text-5xl md:text-6xl font-black font-mono-num tracking-tight">00:00.0</div>
+            <div id="standalone-timer-display" class="text-5xl md:text-6xl font-black font-mono-num text-slate-800 tracking-tight">00:00.0</div>
             <div class="text-xs text-slate-500 font-mono-num mt-1">WPM: <span id="standalone-wpm-live" class="font-bold theme-brand-text text-sm">—</span></div>
 
             <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-end">
               <button id="btn-standalone-start" class="px-4 py-2 theme-brand-bg text-white font-bold text-xs rounded-xl shadow-sm active:scale-95 transition flex items-center gap-1.5">
                 <i class="fa-solid fa-play text-xs"></i> スタート
               </button>
-              <button id="btn-standalone-stop" disabled class="px-4 py-2 bg-rose-400 text-white font-bold text-xs rounded-xl shadow-sm opacity-50 cursor-not-allowed transition flex items-center gap-1.5">
+              <button id="btn-standalone-stop" disabled class="px-4 py-2 bg-rose-500 text-white font-bold text-xs rounded-xl shadow-sm opacity-50 cursor-not-allowed transition flex items-center gap-1.5">
                 <i class="fa-solid fa-stop text-xs"></i> ストップ
               </button>
               <button id="btn-standalone-reset" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition">
@@ -340,7 +316,7 @@
 
         <!-- 記録メモ -->
         <div class="border-t border-slate-100 pt-3 space-y-3">
-          <textarea id="standalone-memo" rows="2" placeholder="音読メモ・気付き..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-1 focus:ring-indigo-400"></textarea>
+          <textarea id="standalone-memo" rows="2" placeholder="音読メモ・気付き..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-1 focus:ring-slate-300"></textarea>
           <div class="flex items-center justify-between flex-wrap gap-2">
             <div id="standalone-star-rating" class="flex gap-1 text-slate-300 text-lg cursor-pointer">
               <i data-star="1" class="fa-solid fa-star"></i>
@@ -349,29 +325,34 @@
               <i data-star="4" class="fa-solid fa-star"></i>
               <i data-star="5" class="fa-solid fa-star"></i>
             </div>
-            <button id="btn-standalone-save-record" class="px-5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-sm transition">
+            <button id="btn-standalone-save-record" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm transition">
               記録を保存
             </button>
           </div>
         </div>
       </div>
 
-      <!-- JSONなし登録教材セレクター（フォルダツリー形式） -->
-      <div class="theme-card rounded-2xl p-4 md:p-6 shadow-sm border space-y-3">
-        <div class="flex items-center justify-between border-b pb-2">
-          <h3 class="text-xs font-bold text-slate-600 flex items-center gap-1.5">
-            <i class="fa-solid fa-folder-tree theme-brand-text"></i> 音読用教材を選択 (JSONなしデータのみ表示)
+      <!-- JSONなし登録教材セレクター -->
+      <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-slate-200/80 space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2 flex-wrap gap-2">
+          <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-folder-tree theme-brand-text"></i> 音読用教材の選択 (JSONなしデータ)
           </h3>
-          <button id="btn-select-free-mode" class="text-[10px] theme-brand-light theme-brand-text px-2 py-0.5 rounded-full font-bold">
-            フリー音読に戻す
-          </button>
+          <div class="flex items-center gap-2">
+            <button id="btn-add-simple-text-timer" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition flex items-center gap-1">
+              <i class="fa-solid fa-plus-circle"></i> 教材を追加
+            </button>
+            <button id="btn-select-free-mode" class="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-600 px-2.5 py-1 rounded-lg font-bold">
+              フリー音読
+            </button>
+          </div>
         </div>
         <div id="standalone-tree-container" class="space-y-1 text-sm"></div>
       </div>
 
       <!-- 履歴カード -->
-      <div class="theme-card rounded-2xl p-4 md:p-6 shadow-sm border space-y-3">
-        <h3 class="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+      <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-slate-200/80 space-y-3">
+        <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
           <i class="fa-solid fa-clock-rotate-left theme-brand-text"></i> 音読履歴ログ
         </h3>
         <div id="standalone-history-list" class="space-y-2"></div>
@@ -379,32 +360,32 @@
     </section>
 
     <!-- VIEW 4: JSON追加画面 -->
-    <section id="view-import" class="theme-card rounded-2xl p-4 md:p-6 shadow-sm border hidden space-y-5">
+    <section id="view-import" class="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-slate-200/80 hidden space-y-5">
       <div class="border-b border-slate-100 pb-3">
-        <h2 class="text-base font-bold">新しい英文（JSON）を登録</h2>
+        <h2 class="text-base font-bold text-slate-800">新しい英文（JSON）を登録</h2>
         <p class="text-[11px] text-slate-500 mt-0.5">ChatGPTやClaude等のLLMが出力したJSONコードを貼り付けてください。</p>
       </div>
 
       <div class="space-y-3">
         <div>
           <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">保存先フォルダ</label>
-          <select id="import-folder-select" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400/20 transition">
+          <select id="import-folder-select" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none transition">
           </select>
         </div>
 
         <div>
           <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">タイトル（任意）</label>
-          <input type="text" id="import-title" placeholder="例: 今日のニュース解説" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base md:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-400/20 transition">
+          <input type="text" id="import-title" placeholder="例: 今日のニュース解説" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base md:text-sm font-medium focus:outline-none transition">
         </div>
 
         <div>
           <div class="flex items-center justify-between mb-1">
             <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">JSONコード</label>
-            <button id="btn-paste-clipboard" type="button" class="text-xs font-semibold theme-brand-text flex items-center gap-1 px-2 py-1 theme-brand-light rounded-lg active:opacity-80 transition">
+            <button id="btn-paste-clipboard" type="button" class="text-xs font-semibold text-slate-600 hover:text-slate-800 flex items-center gap-1 px-2 py-1 bg-slate-100 rounded-lg transition">
               <i class="fa-solid fa-paste"></i> 貼り付け
             </button>
           </div>
-          <textarea id="import-json" rows="8" placeholder='[&#10;  {&#10;    "sentence_id": 1,&#10;    "chunks": [ ... ]&#10;  }&#10;]' class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xs focus:outline-none focus:ring-2 focus:ring-indigo-400/20 transition"></textarea>
+          <textarea id="import-json" rows="8" placeholder='[&#10;  {&#10;    "sentence_id": 1,&#10;    "chunks": [ ... ]&#10;  }&#10;]' class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xs focus:outline-none transition"></textarea>
         </div>
 
         <div id="import-error" class="hidden p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-600 font-medium"></div>
@@ -419,7 +400,7 @@
   </main>
 
   <!-- 下部固定ナビゲーションバー（押しやすい拡大ターゲット） -->
-  <nav class="fixed bottom-0 inset-x-0 theme-card border-t z-40 px-2 py-0 flex justify-around items-stretch h-16 shadow-lg backdrop-blur-md bg-opacity-95">
+  <nav class="fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 z-40 px-2 py-0 flex justify-around items-stretch h-16 shadow-lg backdrop-blur-md bg-opacity-95">
     <button id="nav-reader" class="flex-1 flex flex-col items-center justify-center gap-1 theme-brand-text font-bold transition py-1 active:scale-95">
       <i class="fa-solid fa-book-reader text-xl"></i>
       <span class="text-[11px]">読解</span>
@@ -438,42 +419,72 @@
     </button>
   </nav>
 
-  <!-- 設定モーダル（テーマカラー切り替え） -->
+  <!-- モーダル類 -->
+  <!-- 1. 手持ち参考書・教材追加モーダル (JSONなし) -->
+  <div id="modal-simple-textbook" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-slate-100 space-y-3">
+      <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+        <i class="fa-solid fa-book text-emerald-600"></i> 教材を追加 (JSONなし)
+      </h3>
+      
+      <div class="space-y-2">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase">保存先フォルダ</label>
+          <select id="simple-textbook-folder-select" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none">
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase">タイトル・章名</label>
+          <input type="text" id="simple-textbook-title" placeholder="例: 速読英単語 Lesson 1" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase">単語数 (Word Count)</label>
+          <input type="number" id="simple-textbook-words" placeholder="例: 150" min="0" value="150" class="w-full px-2.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono-num font-bold focus:outline-none">
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button id="btn-cancel-simple-textbook" class="px-3 py-1.5 rounded-lg text-slate-600 text-xs font-semibold">キャンセル</button>
+        <button id="btn-save-simple-textbook" class="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold">追加</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 設定モーダル -->
   <div id="modal-settings" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="theme-card rounded-2xl max-w-xs w-full p-5 shadow-2xl border space-y-4">
-      <div class="flex items-center justify-between border-b pb-2">
-        <h3 class="text-sm font-bold">パステルテーマ設定</h3>
+    <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-slate-100 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+        <h3 class="text-sm font-bold text-slate-800">テーマ設定</h3>
         <button id="btn-close-settings" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
       <div class="space-y-2">
-        <label class="block text-xs font-bold text-slate-500">優しいパステルカラーを選択</label>
+        <label class="block text-xs font-bold text-slate-500">上品なパステルアクセントを選択</label>
         <div class="grid grid-cols-1 gap-2">
-          <button data-set-theme="indigo" class="px-3 py-2 rounded-xl border flex items-center justify-between font-semibold text-xs active:scale-95 transition">
-            <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-indigo-400 inline-block"></span> パステルラベンダー</span>
+          <button data-set-theme="indigo" class="px-3 py-2 rounded-xl border border-slate-200 flex items-center justify-between font-semibold text-xs active:scale-95 transition hover:bg-slate-50">
+            <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-indigo-500 inline-block"></span> スレート・ラベンダー</span>
           </button>
-          <button data-set-theme="mint" class="px-3 py-2 rounded-xl border flex items-center justify-between font-semibold text-xs active:scale-95 transition">
-            <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-teal-400 inline-block"></span> パステルミント</span>
+          <button data-set-theme="mint" class="px-3 py-2 rounded-xl border border-slate-200 flex items-center justify-between font-semibold text-xs active:scale-95 transition hover:bg-slate-50">
+            <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-teal-600 inline-block"></span> ミント・グリーン</span>
           </button>
-          <button data-set-theme="rose" class="px-3 py-2 rounded-xl border flex items-center justify-between font-semibold text-xs active:scale-95 transition">
-            <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-rose-400 inline-block"></span> パステルサクラ</span>
+          <button data-set-theme="rose" class="px-3 py-2 rounded-xl border border-slate-200 flex items-center justify-between font-semibold text-xs active:scale-95 transition hover:bg-slate-50">
+            <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-rose-500 inline-block"></span> シェル・ピンク</span>
           </button>
-          <button data-set-theme="amber" class="px-3 py-2 rounded-xl border flex items-center justify-between font-semibold text-xs active:scale-95 transition">
-            <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-amber-400 inline-block"></span> パステルハニー</span>
-          </button>
-          <button data-set-theme="dark" class="px-3 py-2 rounded-xl border flex items-center justify-between font-semibold text-xs active:scale-95 transition bg-slate-800 text-white">
-            <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-indigo-300 inline-block"></span> マイルドダーク</span>
+          <button data-set-theme="amber" class="px-3 py-2 rounded-xl border border-slate-200 flex items-center justify-between font-semibold text-xs active:scale-95 transition hover:bg-slate-50">
+            <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-amber-500 inline-block"></span> ハニー・ベージュ</span>
           </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- フォルダ作成モーダル -->
+  <!-- 3. フォルダ作成モーダル -->
   <div id="modal-folder" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="theme-card rounded-2xl max-w-xs w-full p-5 shadow-2xl border space-y-3">
-      <h3 id="modal-folder-title" class="text-sm font-bold">新しいフォルダを作成</h3>
-      <input type="text" id="folder-name-input" placeholder="フォルダ名を入力" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-base md:text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-400/20 transition">
+    <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-slate-100 space-y-3">
+      <h3 id="modal-folder-title" class="text-sm font-bold text-slate-800">新しいフォルダを作成</h3>
+      <input type="text" id="folder-name-input" placeholder="フォルダ名を入力" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-base md:text-xs font-medium focus:outline-none transition">
       <div class="flex justify-end gap-2 pt-1">
         <button id="btn-cancel-folder" class="px-3 py-1.5 rounded-lg text-slate-600 text-xs font-semibold">キャンセル</button>
         <button id="btn-save-folder" class="px-4 py-1.5 rounded-lg theme-brand-bg text-white text-xs font-semibold">作成</button>
@@ -481,19 +492,19 @@
     </div>
   </div>
 
-  <!-- 削除確認モーダル -->
+  <!-- 4. 削除確認モーダル -->
   <div id="modal-delete" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="theme-card rounded-2xl max-w-xs w-full p-5 shadow-2xl border space-y-4 text-center">
+    <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-slate-100 space-y-4 text-center">
       <div class="w-10 h-10 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center mx-auto text-lg">
         <i class="fa-solid fa-triangle-exclamation"></i>
       </div>
       <div class="space-y-1">
-        <h3 id="delete-modal-heading" class="text-base font-bold">削除しますか？</h3>
+        <h3 id="delete-modal-heading" class="text-base font-bold text-slate-800">削除しますか？</h3>
         <p id="delete-target-title" class="text-xs text-slate-500 font-medium break-words"></p>
       </div>
       <div class="flex justify-center gap-2 pt-1">
         <button id="btn-cancel-delete" class="w-1/2 py-2 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold">キャンセル</button>
-        <button id="btn-confirm-delete" class="w-1/2 py-2 rounded-xl bg-rose-500 text-white text-xs font-semibold">削除</button>
+        <button id="btn-confirm-delete" class="w-1/2 py-2 rounded-xl bg-rose-600 text-white text-xs font-semibold">削除</button>
       </div>
     </div>
   </div>
@@ -520,11 +531,20 @@
 
     // 初期サンプルデータ
     const SAMPLE_FOLDERS = [
-      { id: "f-1", name: "ニュース・IT", parentId: null },
-      { id: "f-2", name: "人工知能 (AI)", parentId: "f-1" }
+      { id: "f-1", name: "市販英単語帳・長文", parentId: null },
+      { id: "f-2", name: "人工知能 (AI)", parentId: null }
     ];
 
     const SAMPLE_TEXTS = [
+      {
+        id: "text-sample-simple",
+        folderId: "f-1",
+        title: "速読英単語 Lesson 01 (JSONなし参考書)",
+        wordCount: 150,
+        readCount: 0,
+        history: [],
+        data: []
+      },
       {
         id: "text-1",
         folderId: "f-2",
@@ -553,16 +573,6 @@
               { "en": "that it could lead to", "is_important": false, "ja": "それが〜につながる可能性があると" },
               { "en": "widespread job loss.", "is_important": false, "ja": "広範な雇用喪失に。" }
             ]
-          },
-          {
-            "sentence_id": 3,
-            "chunks": [
-              { "en": "However,", "is_important": true, "ja": "しかしながら、" },
-              { "en": "history shows", "is_important": false, "ja": "歴史が示しているのは" },
-              { "en": "that technological revolutions", "is_important": false, "ja": "技術革命が" },
-              { "en": "usually create new types of jobs", "is_important": false, "ja": "通常、新しい種類の仕事を生み出すということだ" },
-              { "en": "while destroying old ones.", "is_important": true, "ja": "古いものを破壊する一方で。" }
-            ]
           }
         ]
       }
@@ -576,8 +586,8 @@
     let deleteTarget = null;
     let expandedFolderIds = new Set();
     let isTreeInit = false;
-    let lastSelectedFolderId = localStorage.getItem('ondoc_last_folder_v2') || "";
-    let currentTheme = localStorage.getItem('ondoc_theme_v2') || "indigo";
+    let lastSelectedFolderId = localStorage.getItem('ondoc_last_folder_v4') || "";
+    let currentTheme = localStorage.getItem('ondoc_theme_v4') || "indigo";
 
     // 読解表示設定
     let config = {
@@ -588,7 +598,7 @@
     };
     let tappedChunks = {};
 
-    // 読解タブ内タイマー状態（上下完全同期）
+    // 読解タイマー状態（上下完全同期）
     let readerTimerRunning = false;
     let readerTimerStart = 0;
     let readerElapsedBase = 0;
@@ -601,7 +611,7 @@
     let standaloneElapsedBase = 0;
     let standaloneTimerInterval = null;
     let standaloneSelectedRating = 0;
-    let standaloneSelectedTextId = 'free'; // 'free' または JSONなしのtext.id
+    let standaloneSelectedTextId = 'free';
     let standaloneFreeHistory = JSON.parse(localStorage.getItem('ondoc_free_history') || '[]');
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -617,22 +627,21 @@
     function applyTheme(themeName) {
       currentTheme = themeName;
       document.documentElement.setAttribute('data-theme', themeName);
-      localStorage.setItem('ondoc_theme_v2', themeName);
+      localStorage.setItem('ondoc_theme_v4', themeName);
 
       const themeColors = {
-        indigo: '#818cf8',
-        mint: '#2dd4bf',
-        rose: '#fb7185',
-        amber: '#fbbf24',
-        dark: '#0f172a'
+        indigo: '#6366f1',
+        mint: '#0d9488',
+        rose: '#e11d48',
+        amber: '#d97706'
       };
-      document.getElementById('theme-color-meta').setAttribute('content', themeColors[themeName] || '#818cf8');
+      document.getElementById('theme-color-meta').setAttribute('content', themeColors[themeName] || '#6366f1');
     }
 
     function loadDataFromStorage() {
       try {
-        const storedFolders = localStorage.getItem('ondoc_folders_v2');
-        const storedTexts = localStorage.getItem('ondoc_texts_v2');
+        const storedFolders = localStorage.getItem('ondoc_folders_v4');
+        const storedTexts = localStorage.getItem('ondoc_texts_v4');
         if (storedFolders && storedTexts) {
           folders = JSON.parse(storedFolders);
           texts = JSON.parse(storedTexts);
@@ -648,7 +657,8 @@
       }
 
       texts.forEach(t => {
-        if (!t.wordCount) t.wordCount = countWordsInTextData(t.data);
+        if (!t.data) t.data = [];
+        if (!t.wordCount) t.wordCount = countWordsInTextData(t.data) || 150;
         if (t.readCount === undefined) t.readCount = 0;
         if (!Array.isArray(t.history)) t.history = [];
       });
@@ -657,12 +667,12 @@
     }
 
     function saveToLocalStorage() {
-      localStorage.setItem('ondoc_folders_v2', JSON.stringify(folders));
-      localStorage.setItem('ondoc_texts_v2', JSON.stringify(texts));
+      localStorage.setItem('ondoc_folders_v4', JSON.stringify(folders));
+      localStorage.setItem('ondoc_texts_v4', JSON.stringify(texts));
     }
 
     function countWordsInTextData(data) {
-      if (!Array.isArray(data)) return 0;
+      if (!Array.isArray(data) || data.length === 0) return 0;
       let total = 0;
       data.forEach(s => {
         if (Array.isArray(s.chunks)) {
@@ -677,49 +687,45 @@
       return total;
     }
 
-    // 読解タブの「上下タイマー」テンプレート生成
+    // クリーンな白基調タイマーボックス
     function setupTimerBoxTemplates() {
       const htmlTemplate = (pos) => `
-        <div class="theme-brand-light rounded-2xl p-3 md:p-4 border border-indigo-100/60 space-y-3 shadow-sm">
+        <div class="bg-slate-50/80 rounded-2xl p-3 md:p-4 border border-slate-200/80 space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div class="flex items-center gap-3">
-              <div id="reader-timer-display-${pos}" class="text-3xl md:text-4xl font-black font-mono-num theme-brand-text tracking-tight">00:00.0</div>
-              <div class="text-xs font-mono-num text-slate-600">
+              <div id="reader-timer-display-${pos}" class="text-3xl md:text-4xl font-black font-mono-num text-slate-800 tracking-tight">00:00.0</div>
+              <div class="text-xs font-mono-num text-slate-500">
                 WPM: <span id="reader-wpm-live-${pos}" class="font-bold theme-brand-text text-sm">—</span>
               </div>
             </div>
 
             <div class="flex items-center gap-1.5 flex-wrap">
-              <!-- 単語数（語数）表示・編集 -->
-              <div class="flex items-center gap-1 bg-white/80 px-2 py-1 rounded-xl border border-slate-200/60 text-xs font-semibold text-slate-600">
+              <div class="flex items-center gap-1 bg-white px-2 py-1 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600">
                 <span>語数</span>
                 <input type="number" id="reader-word-count-${pos}" min="0" class="w-14 bg-white border border-slate-200 rounded px-1 text-center font-mono-num theme-brand-text font-bold outline-none">
               </div>
 
-              <!-- 周回数 -->
-              <div class="flex items-center gap-1 bg-white/80 px-2 py-1 rounded-xl border border-slate-200/60 text-xs font-bold">
+              <div class="flex items-center gap-1 bg-white px-2 py-1 rounded-xl border border-slate-200 text-xs font-bold text-slate-700">
                 <span id="reader-read-count-${pos}" class="theme-brand-text font-mono-num text-sm">1</span>回目
                 <button id="reader-count-minus-${pos}" class="w-5 h-5 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs">-</button>
                 <button id="reader-count-plus-${pos}" class="w-5 h-5 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs">+</button>
               </div>
 
-              <!-- タイマーボタン -->
               <button id="btn-reader-start-${pos}" class="px-3 py-1.5 theme-brand-bg text-white font-bold text-xs rounded-xl shadow-sm active:scale-95 transition flex items-center gap-1">
                 <i class="fa-solid fa-play text-[10px]"></i> 開始
               </button>
-              <button id="btn-reader-stop-${pos}" disabled class="px-3 py-1.5 bg-rose-400 text-white font-bold text-xs rounded-xl shadow-sm opacity-50 cursor-not-allowed transition flex items-center gap-1">
+              <button id="btn-reader-stop-${pos}" disabled class="px-3 py-1.5 bg-rose-500 text-white font-bold text-xs rounded-xl shadow-sm opacity-50 cursor-not-allowed transition flex items-center gap-1">
                 <i class="fa-solid fa-stop text-[10px]"></i> 停止
               </button>
-              <button id="btn-reader-reset-${pos}" class="px-2.5 py-1.5 bg-white text-slate-600 font-semibold text-xs rounded-xl border border-slate-200 transition">
+              <button id="btn-reader-reset-${pos}" class="px-2.5 py-1.5 bg-white text-slate-600 font-semibold text-xs rounded-xl border border-slate-200 transition hover:bg-slate-50">
                 リセット
               </button>
             </div>
           </div>
 
-          <!-- クイック記録保存 -->
-          <div class="flex items-center justify-between gap-2 pt-2 border-t border-indigo-100/80">
+          <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-200/60">
             <div class="flex items-center gap-2 flex-1">
-              <input type="text" id="reader-memo-input-${pos}" placeholder="音読メモ・気付き..." class="w-full px-2.5 py-1 bg-white border border-slate-200/80 rounded-lg text-xs font-medium focus:outline-none focus:ring-1 focus:ring-indigo-400">
+              <input type="text" id="reader-memo-input-${pos}" placeholder="音読メモ・気付き..." class="w-full px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs font-medium focus:outline-none">
               <div id="reader-star-rating-${pos}" class="flex gap-0.5 text-slate-300 text-sm cursor-pointer flex-shrink-0">
                 <i data-star="1" class="fa-solid fa-star"></i>
                 <i data-star="2" class="fa-solid fa-star"></i>
@@ -728,7 +734,7 @@
                 <i data-star="5" class="fa-solid fa-star"></i>
               </div>
             </div>
-            <button id="btn-reader-save-record-${pos}" class="px-3 py-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-lg shadow-sm active:scale-95 transition flex-shrink-0">
+            <button id="btn-reader-save-record-${pos}" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow-sm active:scale-95 transition flex-shrink-0">
               記録保存
             </button>
           </div>
@@ -790,6 +796,12 @@
         };
       });
 
+      // 教材追加（JSONなし）モーダル開閉
+      document.getElementById('btn-add-simple-text-lib').onclick = () => openSimpleTextbookModal(null);
+      document.getElementById('btn-add-simple-text-timer').onclick = () => openSimpleTextbookModal(null);
+      document.getElementById('btn-cancel-simple-textbook').onclick = () => document.getElementById('modal-simple-textbook').classList.add('hidden');
+      document.getElementById('btn-save-simple-textbook').onclick = handleSaveSimpleTextbook;
+
       // ナビゲーション切り替え
       document.getElementById('nav-reader').onclick = () => switchView('reader');
       document.getElementById('nav-library').onclick = () => switchView('library');
@@ -809,7 +821,7 @@
 
       document.getElementById('import-folder-select').addEventListener('change', (e) => {
         lastSelectedFolderId = e.target.value;
-        localStorage.setItem('ondoc_last_folder_v2', lastSelectedFolderId);
+        localStorage.setItem('ondoc_last_folder_v4', lastSelectedFolderId);
       });
 
       document.getElementById('btn-paste-clipboard').onclick = async () => {
@@ -850,7 +862,7 @@
       document.getElementById('btn-cancel-delete').onclick = () => document.getElementById('modal-delete').classList.add('hidden');
       document.getElementById('btn-confirm-delete').onclick = handleConfirmDelete;
 
-      // --- 【読解上下タイマー】 イベントバインド（両方同期） ---
+      // --- 【読解上下タイマー】 イベントバインド ---
       ['top', 'bottom'].forEach(pos => {
         document.getElementById(`btn-reader-start-${pos}`).onclick = startReaderTimer;
         document.getElementById(`btn-reader-stop-${pos}`).onclick = stopReaderTimer;
@@ -897,6 +909,17 @@
       document.getElementById('btn-standalone-save-record').onclick = saveStandaloneTimerRecord;
       document.getElementById('btn-select-free-mode').onclick = selectStandaloneFreeMode;
 
+      document.getElementById('standalone-word-count').addEventListener('input', (e) => {
+        if (standaloneSelectedTextId !== 'free') {
+          const activeText = texts.find(t => t.id === standaloneSelectedTextId);
+          if (activeText) {
+            const v = parseInt(e.target.value, 10);
+            activeText.wordCount = isNaN(v) ? 0 : v;
+            saveToLocalStorage();
+          }
+        }
+      });
+
       document.getElementById('btn-standalone-count-plus').onclick = () => {
         if (standaloneSelectedTextId !== 'free') {
           const activeText = texts.find(t => t.id === standaloneSelectedTextId);
@@ -936,23 +959,23 @@
     function updateToggleStyles() {
       const slashBtn = document.getElementById('toggle-slash');
       slashBtn.className = config.showSlash
-        ? "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 theme-card theme-brand-text border shadow-sm"
+        ? "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 bg-white theme-brand-text border border-slate-200 shadow-sm"
         : "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 border border-slate-200 text-slate-400";
 
       const hlBtn = document.getElementById('toggle-highlight');
       hlBtn.className = config.showHighlight
-        ? "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 theme-card text-rose-500 border shadow-sm"
+        ? "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 bg-white text-rose-500 border border-slate-200 shadow-sm"
         : "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 border border-slate-200 text-slate-400";
 
       const rawBtn = document.getElementById('toggle-raw');
       rawBtn.className = config.isRaw
-        ? "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 bg-emerald-500 text-white shadow-sm"
+        ? "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 bg-slate-800 text-white shadow-sm"
         : "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 border border-slate-200 text-slate-600";
 
       ['tap', 'all', 'none'].forEach(mode => {
         const btn = document.getElementById(`mode-${mode}`);
         if (config.transMode === mode) {
-          btn.className = "px-2 py-0.5 rounded-md transition theme-card theme-brand-text font-bold shadow-sm";
+          btn.className = "px-2 py-0.5 rounded-md transition bg-white theme-brand-text font-bold shadow-sm";
         } else {
           btn.className = "px-2 py-0.5 rounded-md transition text-slate-500 font-medium";
         }
@@ -971,7 +994,7 @@
 
       function buildFolderTree(parentId, level) {
         const ul = document.createElement('ul');
-        ul.className = level > 0 ? "pl-4 ml-3 border-l-2 border-slate-200/80 space-y-1 my-1" : "space-y-1";
+        ul.className = level > 0 ? "pl-4 ml-3 border-l-2 border-slate-100 space-y-1 my-1" : "space-y-1";
 
         const subFolders = folders.filter(f => f.parentId === parentId);
         subFolders.forEach(f => {
@@ -983,18 +1006,19 @@
           const totalItems = childTextCount + childFolderCount;
 
           const folderHeader = document.createElement('div');
-          folderHeader.className = "flex items-center justify-between p-2.5 rounded-xl text-slate-700 bg-slate-100/80 hover:bg-slate-200/60 font-semibold cursor-pointer transition select-none group";
+          folderHeader.className = "flex items-center justify-between p-2.5 rounded-xl text-slate-700 bg-slate-50 hover:bg-slate-100 font-semibold cursor-pointer transition select-none group border border-slate-100";
           
           folderHeader.innerHTML = `
             <div class="flex items-center gap-2 truncate">
               <i class="fa-solid ${isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'} text-slate-400 text-xs w-3"></i>
-              <i class="fa-solid ${isExpanded ? 'fa-folder-open text-amber-400' : 'fa-folder text-amber-300'} text-base"></i>
-              <span class="truncate text-sm font-bold">${escapeHtml(f.name)}</span>
-              <span class="text-[10px] font-medium text-slate-400 bg-white/80 px-2 py-0.5 rounded-full border border-slate-200/60">${totalItems}件</span>
+              <i class="fa-solid ${isExpanded ? 'fa-folder-open text-amber-500' : 'fa-folder text-amber-400'} text-base"></i>
+              <span class="truncate text-sm font-bold text-slate-800">${escapeHtml(f.name)}</span>
+              <span class="text-[10px] font-medium text-slate-400 bg-white px-2 py-0.5 rounded-full border border-slate-200">${totalItems}件</span>
             </div>
             <div class="flex items-center gap-1">
+              <button title="教材を追加(JSONなし)" class="btn-add-text-to-folder p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-white rounded-lg transition"><i class="fa-solid fa-file-circle-plus text-xs"></i></button>
               <button title="サブフォルダ追加" class="btn-add-sub p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-lg transition"><i class="fa-solid fa-plus text-xs"></i></button>
-              <button title="フォルダ削除" class="btn-del-folder p-1.5 text-slate-400 hover:text-rose-500 hover:bg-white rounded-lg transition"><i class="fa-solid fa-trash-can text-xs"></i></button>
+              <button title="フォルダ削除" class="btn-del-folder p-1.5 text-slate-400 hover:text-rose-600 hover:bg-white rounded-lg transition"><i class="fa-solid fa-trash-can text-xs"></i></button>
             </div>
           `;
 
@@ -1004,6 +1028,7 @@
             renderTree();
           };
 
+          folderHeader.querySelector('.btn-add-text-to-folder').onclick = (e) => { e.stopPropagation(); openSimpleTextbookModal(f.id); };
           folderHeader.querySelector('.btn-add-sub').onclick = (e) => { e.stopPropagation(); openFolderModal(f.id); };
           folderHeader.querySelector('.btn-del-folder').onclick = (e) => {
             e.stopPropagation();
@@ -1024,22 +1049,22 @@
         const childTexts = texts.filter(t => t.folderId === parentId);
         childTexts.forEach(t => {
           const li = document.createElement('li');
-          const isActive = t.id === currentTextId;
           const hasJson = Array.isArray(t.data) && t.data.length > 0;
+          const isActive = hasJson ? (t.id === currentTextId) : (t.id === standaloneSelectedTextId);
 
           li.className = `p-2.5 px-3 rounded-xl cursor-pointer transition flex items-center justify-between gap-2.5 ${
-            isActive ? 'theme-brand-bg text-white font-bold shadow-sm' : 'hover:bg-slate-100/80 bg-white border border-slate-200/50'
+            isActive ? 'theme-brand-light theme-brand-border border text-slate-800 font-bold' : 'hover:bg-slate-50 bg-white border border-slate-200/60'
           }`;
           
           li.innerHTML = `
             <div class="flex items-center gap-2.5 truncate min-w-0">
-              <i class="fa-regular ${hasJson ? 'fa-file-code' : 'fa-file-lines'} ${isActive ? 'text-white/80' : 'text-slate-400'} text-xs flex-shrink-0"></i>
-              <span class="truncate text-xs md:text-sm font-medium tracking-tight">${escapeHtml(t.title)}</span>
-              ${!hasJson ? `<span class="text-[9px] bg-amber-100 text-amber-700 font-bold px-1.5 py-0.2 rounded flex-shrink-0">JSONなし</span>` : ''}
+              <i class="fa-regular ${hasJson ? 'fa-file-code' : 'fa-file-lines'} ${isActive ? 'theme-brand-text' : 'text-slate-400'} text-xs flex-shrink-0"></i>
+              <span class="truncate text-xs md:text-sm font-medium tracking-tight text-slate-800">${escapeHtml(t.title)}</span>
+              ${!hasJson ? `<span class="text-[9px] bg-slate-100 text-slate-600 font-bold px-1.5 py-0.2 rounded flex-shrink-0">参考書</span>` : ''}
             </div>
             <div class="flex items-center gap-2 flex-shrink-0">
-              <span class="text-[10px] ${isActive ? 'bg-black/10 text-white' : 'bg-slate-100 text-slate-500'} px-2 py-0.5 rounded-full font-mono-num">${t.readCount || 0}回</span>
-              <button title="文章削除" class="btn-del-text p-1.5 ${isActive ? 'text-white/80 hover:text-white' : 'text-slate-400 hover:text-rose-500'} rounded-lg transition">
+              <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono-num">${t.readCount || 0}回</span>
+              <button title="削除" class="btn-del-text p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition">
                 <i class="fa-solid fa-trash-can text-xs"></i>
               </button>
             </div>
@@ -1047,11 +1072,20 @@
 
           li.onclick = (e) => {
             e.stopPropagation();
-            currentTextId = t.id;
-            tappedChunks = {};
-            resetReaderTimer();
-            renderTree();
-            switchView('reader');
+            if (hasJson) {
+              currentTextId = t.id;
+              tappedChunks = {};
+              resetReaderTimer();
+              renderTree();
+              switchView('reader');
+            } else {
+              standaloneSelectedTextId = t.id;
+              document.getElementById('standalone-active-title').textContent = `📖 ${t.title}`;
+              document.getElementById('standalone-word-count').value = t.wordCount || 150;
+              document.getElementById('standalone-read-count').textContent = t.readCount + 1;
+              renderTree();
+              switchView('timer');
+            }
           };
 
           const delBtn = li.querySelector('.btn-del-text');
@@ -1059,7 +1093,7 @@
             delBtn.onclick = (e) => {
               e.stopPropagation();
               deleteTarget = { type: 'text', id: t.id };
-              document.getElementById('delete-modal-heading').textContent = "文章を削除しますか？";
+              document.getElementById('delete-modal-heading').textContent = "教材を削除しますか？";
               document.getElementById('delete-target-title').textContent = `「${t.title}」`;
               document.getElementById('modal-delete').classList.remove('hidden');
             };
@@ -1075,26 +1109,33 @@
     }
 
     function renderFolderSelectOptions() {
-      const select = document.getElementById('import-folder-select');
-      select.innerHTML = '<option value="">(ルート / フォルダなし)</option>';
+      const selects = [
+        document.getElementById('import-folder-select'),
+        document.getElementById('simple-textbook-folder-select')
+      ];
 
-      function addOptions(parentId, prefix) {
-        const sub = folders.filter(f => f.parentId === parentId);
-        sub.forEach(f => {
-          const opt = document.createElement('option');
-          opt.value = f.id;
-          opt.textContent = prefix + f.name;
-          select.appendChild(opt);
-          addOptions(f.id, prefix + "　");
-        });
-      }
-      addOptions(null, "📂 ");
+      selects.forEach(select => {
+        if (!select) return;
+        select.innerHTML = '<option value="">(ルート / フォルダなし)</option>';
 
-      if (lastSelectedFolderId && Array.from(select.options).some(opt => opt.value === lastSelectedFolderId)) {
-        select.value = lastSelectedFolderId;
-      } else {
-        select.value = "";
-      }
+        function addOptions(parentId, prefix) {
+          const sub = folders.filter(f => f.parentId === parentId);
+          sub.forEach(f => {
+            const opt = document.createElement('option');
+            opt.value = f.id;
+            opt.textContent = prefix + f.name;
+            select.appendChild(opt);
+            addOptions(f.id, prefix + "　");
+          });
+        }
+        addOptions(null, "📂 ");
+
+        if (lastSelectedFolderId && Array.from(select.options).some(opt => opt.value === lastSelectedFolderId)) {
+          select.value = lastSelectedFolderId;
+        } else {
+          select.value = "";
+        }
+      });
     }
 
     function getFolderPath(folderId) {
@@ -1145,7 +1186,7 @@
 
       if (config.isRaw) {
         const p = document.createElement('p');
-        p.className = "leading-relaxed font-normal tracking-wide";
+        p.className = "leading-relaxed font-normal tracking-wide text-slate-800";
         const fullText = (activeText.data || []).map(s => s.chunks.map(c => c.en).join(' ')).join(' ');
         p.textContent = fullText || "英文データがありません。";
         readerContent.appendChild(p);
@@ -1156,7 +1197,7 @@
       else readerContent.classList.remove('mode-no-trans');
 
       if (!activeText.data || activeText.data.length === 0) {
-        readerContent.innerHTML = '<p class="text-xs text-slate-400 py-4">この教材にはJSONスラッシュデータが含まれていません。「音読タイマー」タブまたは「白文」で読解を行ってください。</p>';
+        readerContent.innerHTML = '<p class="text-xs text-slate-400 py-4">この教材にはJSONスラッシュデータが含まれていません。「音読タイマー」タブにて音読管理を行ってください。</p>';
         return;
       }
 
@@ -1188,7 +1229,7 @@
               const restWords = words.slice(1).join(' ');
 
               const redWordSpan = document.createElement('span');
-              redWordSpan.className = "text-rose-500 font-semibold bg-rose-50 px-1 rounded";
+              redWordSpan.className = "text-rose-600 font-semibold bg-rose-50 px-1 rounded";
               redWordSpan.textContent = firstWord;
 
               enSpan.appendChild(redWordSpan);
@@ -1227,7 +1268,7 @@
       });
     }
 
-    // ------------------- 【読解タブ内】上下タイマーロジック（完全同期） -------------------
+    // ------------------- 【読解上下タイマー】 ロジック -------------------
     function syncReaderWordCountInput() {
       const activeText = texts.find(t => t.id === currentTextId);
       const val = activeText ? (activeText.wordCount || 0) : 0;
@@ -1385,7 +1426,7 @@
                 <span class="text-slate-500 text-[11px]">(${r.wpm || 0} WPM)</span>
                 ${starsHtml}
               </div>
-              <button onclick="deleteReaderHistoryRecord('${r.id}')" class="text-slate-400 hover:text-rose-500 p-1 transition"><i class="fa-solid fa-xmark text-xs"></i></button>
+              <button onclick="deleteReaderHistoryRecord('${r.id}')" class="text-slate-400 hover:text-rose-600 p-1 transition"><i class="fa-solid fa-xmark text-xs"></i></button>
             </div>
             ${r.memo ? `<p class="text-[11px] text-slate-600 bg-white p-1.5 rounded-lg border border-slate-100">${escapeHtml(r.memo)}</p>` : ''}
             <span class="text-[10px] text-slate-500 font-semibold font-mono-num mt-0.5">${dateStr}</span>
@@ -1404,7 +1445,7 @@
       renderReaderHistoryList();
     }
 
-    // ------------------- 【単独音読タイマー】 (JSONなし教材フォルダツリー対応) -------------------
+    // ------------------- 【単独音読タイマー】 (参考書ツリー対応) -------------------
     function selectStandaloneFreeMode() {
       standaloneSelectedTextId = 'free';
       document.getElementById('standalone-active-title').textContent = "💡 自由音読モード (市販教材・外部テキスト)";
@@ -1414,20 +1455,60 @@
       renderStandaloneTimerTree();
     }
 
+    function openSimpleTextbookModal(folderId) {
+      targetParentFolderId = folderId;
+      renderFolderSelectOptions();
+      const select = document.getElementById('simple-textbook-folder-select');
+      if (select) select.value = folderId || "";
+      document.getElementById('simple-textbook-title').value = "";
+      document.getElementById('simple-textbook-words').value = 150;
+      document.getElementById('modal-simple-textbook').classList.remove('hidden');
+    }
+
+    function handleSaveSimpleTextbook() {
+      const title = document.getElementById('simple-textbook-title').value.trim();
+      const folderId = document.getElementById('simple-textbook-folder-select').value || null;
+      const wordCount = parseInt(document.getElementById('simple-textbook-words').value, 10) || 150;
+
+      if (!title) return;
+
+      const newText = {
+        id: "text-simple-" + Date.now(),
+        folderId: folderId,
+        title: title,
+        wordCount: wordCount,
+        readCount: 0,
+        history: [],
+        data: []
+      };
+
+      texts.push(newText);
+      standaloneSelectedTextId = newText.id;
+      if (folderId) expandedFolderIds.add(folderId);
+
+      saveToLocalStorage();
+
+      document.getElementById('modal-simple-textbook').classList.add('hidden');
+      document.getElementById('standalone-active-title').textContent = `📖 ${title}`;
+      document.getElementById('standalone-word-count').value = wordCount;
+      document.getElementById('standalone-read-count').textContent = 1;
+
+      renderTree();
+      switchView('timer');
+    }
+
     function renderStandaloneTimerTree() {
       const container = document.getElementById('standalone-tree-container');
       container.innerHTML = '';
 
-      // JSONなしデータが存在するか確認
       const isNonJson = (t) => !t.data || !Array.isArray(t.data) || t.data.length === 0;
 
       function buildStandaloneTree(parentId, level) {
         const ul = document.createElement('ul');
-        ul.className = level > 0 ? "pl-4 ml-3 border-l-2 border-slate-200/80 space-y-1 my-1" : "space-y-1";
+        ul.className = level > 0 ? "pl-4 ml-3 border-l-2 border-slate-100 space-y-1 my-1" : "space-y-1";
 
         const subFolders = folders.filter(f => f.parentId === parentId);
         subFolders.forEach(f => {
-          // このフォルダ内にJSONなしテキスト（またはその孫フォルダ）が存在するか判定
           function hasNonJsonInFolder(fid) {
             const hasDirect = texts.some(t => t.folderId === fid && isNonJson(t));
             if (hasDirect) return true;
@@ -1441,11 +1522,14 @@
           const isExpanded = expandedFolderIds.has(f.id);
 
           const folderHeader = document.createElement('div');
-          folderHeader.className = "flex items-center gap-2 p-2 rounded-xl text-slate-700 bg-slate-100/80 font-semibold cursor-pointer select-none";
+          folderHeader.className = "flex items-center justify-between p-2 rounded-xl text-slate-700 bg-slate-50 border border-slate-100 font-semibold cursor-pointer select-none";
           folderHeader.innerHTML = `
-            <i class="fa-solid ${isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'} text-slate-400 text-xs w-3"></i>
-            <i class="fa-solid ${isExpanded ? 'fa-folder-open text-amber-400' : 'fa-folder text-amber-300'} text-sm"></i>
-            <span class="truncate text-xs font-bold">${escapeHtml(f.name)}</span>
+            <div class="flex items-center gap-2 truncate">
+              <i class="fa-solid ${isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'} text-slate-400 text-xs w-3"></i>
+              <i class="fa-solid ${isExpanded ? 'fa-folder-open text-amber-500' : 'fa-folder text-amber-400'} text-sm"></i>
+              <span class="truncate text-xs font-bold text-slate-800">${escapeHtml(f.name)}</span>
+            </div>
+            <button title="このフォルダに教材を追加" class="btn-add-text-sub p-1 text-slate-400 hover:text-emerald-600 rounded"><i class="fa-solid fa-plus text-xs"></i></button>
           `;
 
           folderHeader.onclick = () => {
@@ -1453,6 +1537,14 @@
             else expandedFolderIds.add(f.id);
             renderStandaloneTimerTree();
           };
+
+          const addBtn = folderHeader.querySelector('.btn-add-text-sub');
+          if (addBtn) {
+            addBtn.onclick = (e) => {
+              e.stopPropagation();
+              openSimpleTextbookModal(f.id);
+            };
+          }
 
           li.appendChild(folderHeader);
 
@@ -1462,29 +1554,28 @@
           ul.appendChild(li);
         });
 
-        // JSONなし登録教材のみ抽出
         const nonJsonTexts = texts.filter(t => t.folderId === parentId && isNonJson(t));
         nonJsonTexts.forEach(t => {
           const li = document.createElement('li');
           const isActive = t.id === standaloneSelectedTextId;
 
           li.className = `p-2 px-3 rounded-xl cursor-pointer transition flex items-center justify-between gap-2 ${
-            isActive ? 'theme-brand-bg text-white font-bold shadow-sm' : 'hover:bg-slate-100/80 bg-white border border-slate-200/50'
+            isActive ? 'theme-brand-light theme-brand-border border text-slate-800 font-bold' : 'hover:bg-slate-50 bg-white border border-slate-200/60'
           }`;
 
           li.innerHTML = `
             <div class="flex items-center gap-2 truncate">
-              <i class="fa-regular fa-file-lines ${isActive ? 'text-white/80' : 'text-slate-400'} text-xs"></i>
-              <span class="truncate text-xs font-medium">${escapeHtml(t.title)}</span>
+              <i class="fa-regular fa-file-lines ${isActive ? 'theme-brand-text' : 'text-slate-400'} text-xs"></i>
+              <span class="truncate text-xs font-medium text-slate-800">${escapeHtml(t.title)}</span>
             </div>
-            <span class="text-[10px] ${isActive ? 'bg-black/10 text-white' : 'bg-slate-100 text-slate-500'} px-2 py-0.5 rounded-full font-mono-num">${t.readCount || 0}回</span>
+            <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-mono-num">${t.readCount || 0}回</span>
           `;
 
           li.onclick = (e) => {
             e.stopPropagation();
             standaloneSelectedTextId = t.id;
             document.getElementById('standalone-active-title').textContent = `📖 ${t.title}`;
-            document.getElementById('standalone-word-count').value = t.wordCount || 100;
+            document.getElementById('standalone-word-count').value = t.wordCount || 150;
             document.getElementById('standalone-read-count').textContent = t.readCount + 1;
             renderStandaloneTimerTree();
             renderStandaloneTimerHistoryList();
@@ -1498,7 +1589,14 @@
 
       const treeUl = buildStandaloneTree(null, 0);
       if (!treeUl.hasChildNodes()) {
-        container.innerHTML = '<p class="text-xs text-slate-400 py-3 text-center">JSONなし登録教材はありません。「ライブラリ」から作成するか自由音読をご利用ください。</p>';
+        container.innerHTML = `
+          <div class="text-center py-5 border border-dashed border-slate-200 rounded-xl bg-slate-50">
+            <p class="text-xs text-slate-500 font-bold mb-2">登録された参考書・教材（JSONなし）がありません</p>
+            <button onclick="openSimpleTextbookModal(null)" class="px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-xl shadow-sm hover:bg-emerald-700 transition">
+              ＋ 新しい教材を追加する
+            </button>
+          </div>
+        `;
       } else {
         container.appendChild(treeUl);
       }
@@ -1628,7 +1726,7 @@
                 <span class="text-slate-500 text-[11px]">(${r.wpm || 0} WPM)</span>
                 ${starsHtml}
               </div>
-              <button onclick="deleteStandaloneHistoryRecord('${r.id}')" class="text-slate-400 hover:text-rose-500 p-1 transition"><i class="fa-solid fa-xmark text-xs"></i></button>
+              <button onclick="deleteStandaloneHistoryRecord('${r.id}')" class="text-slate-400 hover:text-rose-600 p-1 transition"><i class="fa-solid fa-xmark text-xs"></i></button>
             </div>
             ${r.memo ? `<p class="text-[11px] text-slate-600 bg-white p-1.5 rounded-lg border border-slate-100">${escapeHtml(r.memo)}</p>` : ''}
             <span class="text-[10px] text-slate-500 font-semibold font-mono-num mt-0.5">${dateStr}</span>
@@ -1715,7 +1813,7 @@
         if (folderId) expandedFolderIds.add(folderId);
 
         lastSelectedFolderId = folderId || "";
-        localStorage.setItem('ondoc_last_folder_v2', lastSelectedFolderId);
+        localStorage.setItem('ondoc_last_folder_v4', lastSelectedFolderId);
 
         saveToLocalStorage();
 
@@ -1743,6 +1841,9 @@
         if (currentTextId === deleteTarget.id) {
           currentTextId = texts.length > 0 ? texts[0].id : null;
         }
+        if (standaloneSelectedTextId === deleteTarget.id) {
+          standaloneSelectedTextId = 'free';
+        }
       } else if (deleteTarget.type === 'folder') {
         const folderIdsToDelete = [deleteTarget.id];
         function collectChildren(fid) {
@@ -1760,6 +1861,9 @@
         if (!texts.find(t => t.id === currentTextId)) {
           currentTextId = texts.length > 0 ? texts[0].id : null;
         }
+        if (!texts.find(t => t.id === standaloneSelectedTextId)) {
+          standaloneSelectedTextId = 'free';
+        }
       }
 
       saveToLocalStorage();
@@ -1767,11 +1871,12 @@
       deleteTarget = null;
       renderTree();
       renderReader();
+      renderStandaloneTimerTree();
     }
 
     function handleExportData() {
       const backupData = {
-        version: "OnDoc-2.0",
+        version: "OnDoc-4.0",
         exportDate: new Date().toISOString(),
         folders: folders,
         texts: texts,
@@ -1804,6 +1909,7 @@
             localStorage.setItem('ondoc_free_history', JSON.stringify(standaloneFreeHistory));
             renderTree();
             renderReader();
+            renderStandaloneTimerTree();
           }
         } catch (err) {
           console.error("Restore error", err);
