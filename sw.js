@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chunk-reader-v6';
+const CACHE_NAME = 'ondoc-v1';
 const ASSETS = [
   './',
   './index.html',
