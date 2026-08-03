@@ -22,9 +22,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   
-  <!-- 平面2Dカラーピッカーライブラリ (iro.js) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/iro.js/5.5.2/iro.min.js"></script>
-
   <style>
     :root {
       --brand-primary: #6366f1;
@@ -113,11 +110,6 @@
       font-weight: 300 !important;
       margin: 0 2px !important;
       user-select: none !important;
-    }
-
-    /* iro.js カラーピッカーのスタイル調整 */
-    .IroPicker {
-      margin: 0 auto;
     }
   </style>
 </head>
@@ -418,58 +410,90 @@
     </div>
   </div>
 
-  <!-- 2. 設定モーダル（2D平面カラーピッカー搭載） -->
+  <!-- 2. 設定モーダル (全6項目のカラーカード並び構成) -->
   <div id="modal-settings" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-slate-100 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar">
+    <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-slate-100 space-y-4 max-h-[85vh] overflow-y-auto no-scrollbar">
       <div class="flex items-center justify-between border-b border-slate-100 pb-2">
         <h3 class="text-sm font-bold text-slate-800">カラーカスタマイズ</h3>
         <button id="btn-close-settings" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-base"></i></button>
       </div>
 
-      <!-- 変更対象の選択項目 -->
-      <div>
-        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5">変更する項目を選択</label>
-        <div id="color-target-selector" class="grid grid-cols-2 gap-1.5 text-xs">
-          <button data-target="theme" class="color-target-btn flex items-center gap-1.5 p-2 rounded-xl border border-slate-200 text-left active:scale-95 transition">
-            <span id="chip-theme" class="w-3.5 h-3.5 rounded-full inline-block border border-black/10 flex-shrink-0"></span>
-            <span class="truncate text-[10px] font-bold">メインテーマ</span>
-          </button>
-          <button data-target="important" class="color-target-btn flex items-center gap-1.5 p-2 rounded-xl border border-slate-200 text-left active:scale-95 transition">
-            <span id="chip-important" class="w-3.5 h-3.5 rounded-full inline-block border border-black/10 flex-shrink-0"></span>
-            <span class="truncate text-[10px] font-bold">重要語ハイライト</span>
-          </button>
-          <button data-target="action" class="color-target-btn flex items-center gap-1.5 p-2 rounded-xl border border-slate-200 text-left active:scale-95 transition">
-            <span id="chip-action" class="w-3.5 h-3.5 rounded-full inline-block border border-black/10 flex-shrink-0"></span>
-            <span class="truncate text-[10px] font-bold">保存・追加ボタン</span>
-          </button>
-          <button data-target="stop" class="color-target-btn flex items-center gap-1.5 p-2 rounded-xl border border-slate-200 text-left active:scale-95 transition">
-            <span id="chip-stop" class="w-3.5 h-3.5 rounded-full inline-block border border-black/10 flex-shrink-0"></span>
-            <span class="truncate text-[10px] font-bold">タイマー停止ボタン</span>
-          </button>
-          <button data-target="wpm" class="color-target-btn flex items-center gap-1.5 p-2 rounded-xl border border-slate-200 text-left active:scale-95 transition">
-            <span id="chip-wpm" class="w-3.5 h-3.5 rounded-full inline-block border border-black/10 flex-shrink-0"></span>
-            <span class="truncate text-[10px] font-bold">WPM表示</span>
-          </button>
-          <button data-target="historyCount" class="color-target-btn flex items-center gap-1.5 p-2 rounded-xl border border-slate-200 text-left active:scale-95 transition">
-            <span id="chip-historyCount" class="w-3.5 h-3.5 rounded-full inline-block border border-black/10 flex-shrink-0"></span>
-            <span class="truncate text-[10px] font-bold">音読履歴の回数</span>
-          </button>
+      <div class="space-y-3">
+        <!-- 1. メインテーマカラー -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">メインテーマカラー</label>
+          <div class="flex items-center gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+            <input type="color" id="picker-theme-color" value="#6366f1" class="w-10 h-10 rounded-lg border-0 cursor-pointer p-0 bg-transparent flex-shrink-0">
+            <div class="flex flex-col">
+              <span id="hex-theme-color" class="text-xs font-mono-num font-bold text-slate-700">#6366f1</span>
+              <span class="text-[10px] text-slate-400">ヘッダー・タブ等のメイン色</span>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <!-- 選択中の項目・HEX値 -->
-      <div class="flex items-center justify-between bg-slate-50 px-3 py-2 rounded-xl border border-slate-200">
-        <span id="active-target-label" class="text-xs font-bold text-slate-700">メインテーマカラー</span>
-        <span id="active-target-hex" class="text-xs font-mono-num font-bold text-slate-600">#6366f1</span>
-      </div>
+        <!-- 2. 重要語ハイライトカラー -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">重要語ハイライトカラー</label>
+          <div class="flex items-center gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+            <input type="color" id="picker-important-color" value="#f43f5e" class="w-10 h-10 rounded-lg border-0 cursor-pointer p-0 bg-transparent flex-shrink-0">
+            <div class="flex flex-col">
+              <span id="hex-important-color" class="text-xs font-mono-num font-bold text-slate-700">#f43f5e</span>
+              <span class="text-[10px] text-slate-400">構文重要語（構文要素）の色</span>
+            </div>
+          </div>
+        </div>
 
-      <!-- 平面2Dカラーピッカー (iro.js) 埋め込みエリア -->
-      <div class="flex justify-center py-1">
-        <div id="picker-container"></div>
-      </div>
+        <!-- 3. 保存・追加ボタンカラー -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">保存・追加ボタンカラー</label>
+          <div class="flex items-center gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+            <input type="color" id="picker-action-color" value="#475569" class="w-10 h-10 rounded-lg border-0 cursor-pointer p-0 bg-transparent flex-shrink-0">
+            <div class="flex flex-col">
+              <span id="hex-action-color" class="text-xs font-mono-num font-bold text-slate-700">#475569</span>
+              <span class="text-[10px] text-slate-400">教材追加や記録保存ボタンの色</span>
+            </div>
+          </div>
+        </div>
 
-      <div class="pt-1 flex justify-end">
-        <button id="btn-reset-colors" class="text-xs text-slate-500 hover:text-slate-700 underline">初期色に戻す</button>
+        <!-- 4. タイマー停止ボタンカラー -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">タイマー停止ボタンカラー</label>
+          <div class="flex items-center gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+            <input type="color" id="picker-stop-color" value="#ef4444" class="w-10 h-10 rounded-lg border-0 cursor-pointer p-0 bg-transparent flex-shrink-0">
+            <div class="flex flex-col">
+              <span id="hex-stop-color" class="text-xs font-mono-num font-bold text-slate-700">#ef4444</span>
+              <span class="text-[10px] text-slate-400">タイマーの「停止」ボタンの色</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. WPM表示カラー -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">WPM表示カラー</label>
+          <div class="flex items-center gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+            <input type="color" id="picker-wpm-color" value="#0284c7" class="w-10 h-10 rounded-lg border-0 cursor-pointer p-0 bg-transparent flex-shrink-0">
+            <div class="flex flex-col">
+              <span id="hex-wpm-color" class="text-xs font-mono-num font-bold text-slate-700">#0284c7</span>
+              <span class="text-[10px] text-slate-400">タイマーのWPM数値の色</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. 音読履歴の回数カラー -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">音読履歴の回数カラー</label>
+          <div class="flex items-center gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+            <input type="color" id="picker-history-count-color" value="#6366f1" class="w-10 h-10 rounded-lg border-0 cursor-pointer p-0 bg-transparent flex-shrink-0">
+            <div class="flex flex-col">
+              <span id="hex-history-count-color" class="text-xs font-mono-num font-bold text-slate-700">#6366f1</span>
+              <span class="text-[10px] text-slate-400">履歴内の「〇回目」テキストの色</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-2 flex justify-end">
+          <button id="btn-reset-colors" class="text-xs text-slate-500 hover:text-slate-700 underline">初期色に戻す</button>
+        </div>
       </div>
     </div>
   </div>
@@ -572,9 +596,6 @@
     let customWpmColor = localStorage.getItem('ondoc_wpm_color_v5') || "#0284c7";
     let customHistoryCountColor = localStorage.getItem('ondoc_history_count_color_v5') || "#6366f1";
 
-    let iroPicker = null;
-    let activeColorTarget = 'theme';
-
     let config = { showSlash: true, showHighlight: true, transMode: 'tap', isRaw: false };
     let tappedChunks = {};
 
@@ -617,105 +638,34 @@
       document.documentElement.style.setProperty('--history-count-color', customHistoryCountColor);
 
       document.getElementById('theme-color-meta').setAttribute('content', themeHex);
-    }
 
-    /* 平面2Dカラーピッカー (iro.js) 初期化・連動処理 */
-    function initIroPicker() {
-      if (iroPicker) return;
-      const container = document.getElementById('picker-container');
-      if (!container) return;
+      const pTheme = document.getElementById('picker-theme-color');
+      const pImp = document.getElementById('picker-important-color');
+      const pAct = document.getElementById('picker-action-color');
+      const pStop = document.getElementById('picker-stop-color');
+      const pWpm = document.getElementById('picker-wpm-color');
+      const pHist = document.getElementById('picker-history-count-color');
 
-      iroPicker = new iro.ColorPicker("#picker-container", {
-        width: 210,
-        color: customThemeColor,
-        borderWidth: 1,
-        borderColor: "#e2e8f0",
-        layout: [
-          { component: iro.ui.Box }, // 2D SV Box (平面で点を動かすやつ)
-          { component: iro.ui.Slider, options: { sliderType: 'hue' } } // Hue Slider (色相)
-        ]
-      });
+      if (pTheme) pTheme.value = themeHex;
+      if (pImp) pImp.value = importantHex;
+      if (pAct) pAct.value = customActionColor;
+      if (pStop) pStop.value = customStopColor;
+      if (pWpm) pWpm.value = customWpmColor;
+      if (pHist) pHist.value = customHistoryCountColor;
 
-      iroPicker.on('color:change', (color) => {
-        updateActiveTargetColor(color.hexString);
-      });
-    }
+      const hTheme = document.getElementById('hex-theme-color');
+      const hImp = document.getElementById('hex-important-color');
+      const hAct = document.getElementById('hex-action-color');
+      const hStop = document.getElementById('hex-stop-color');
+      const hWpm = document.getElementById('hex-wpm-color');
+      const hHist = document.getElementById('hex-history-count-color');
 
-    function getTargetColor(targetKey) {
-      switch (targetKey) {
-        case 'theme': return customThemeColor;
-        case 'important': return customImportantColor;
-        case 'action': return customActionColor;
-        case 'stop': return customStopColor;
-        case 'wpm': return customWpmColor;
-        case 'historyCount': return customHistoryCountColor;
-        default: return "#6366f1";
-      }
-    }
-
-    function getTargetName(targetKey) {
-      switch (targetKey) {
-        case 'theme': return "メインテーマカラー";
-        case 'important': return "重要語ハイライトカラー";
-        case 'action': return "保存・追加ボタンカラー";
-        case 'stop': return "タイマー停止ボタンカラー";
-        case 'wpm': return "WPM表示カラー";
-        case 'historyCount': return "音読履歴の回数カラー";
-        default: return "";
-      }
-    }
-
-    function selectColorTarget(targetKey) {
-      activeColorTarget = targetKey;
-      const hex = getTargetColor(targetKey);
-      
-      document.getElementById('active-target-label').textContent = getTargetName(targetKey);
-      document.getElementById('active-target-hex').textContent = hex;
-
-      document.querySelectorAll('.color-target-btn').forEach(btn => {
-        if (btn.dataset.target === targetKey) {
-          btn.className = "color-target-btn flex items-center gap-1.5 p-2 rounded-xl border-2 border-indigo-500 bg-indigo-50/50 text-slate-800 font-bold active:scale-95 transition";
-        } else {
-          btn.className = "color-target-btn flex items-center gap-1.5 p-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 font-medium active:scale-95 transition";
-        }
-      });
-
-      if (iroPicker) {
-        iroPicker.color.set(hex);
-      }
-    }
-
-    function updateActiveTargetColor(hex) {
-      let theme = customThemeColor;
-      let important = customImportantColor;
-      let action = customActionColor;
-      let stop = customStopColor;
-      let wpm = customWpmColor;
-      let historyCount = customHistoryCountColor;
-
-      if (activeColorTarget === 'theme') theme = hex;
-      if (activeColorTarget === 'important') important = hex;
-      if (activeColorTarget === 'action') action = hex;
-      if (activeColorTarget === 'stop') stop = hex;
-      if (activeColorTarget === 'wpm') wpm = hex;
-      if (activeColorTarget === 'historyCount') historyCount = hex;
-
-      applyCustomColors(theme, important, action, stop, wpm, historyCount);
-      document.getElementById('active-target-hex').textContent = hex;
-      updateColorChips();
-    }
-
-    function updateColorChips() {
-      const setBg = (id, val) => {
-        const el = document.getElementById(id);
-        if (el) el.style.backgroundColor = val;
-      };
-      setBg('chip-theme', customThemeColor);
-      setBg('chip-important', customImportantColor);
-      setBg('chip-action', customActionColor);
-      setBg('chip-stop', customStopColor);
-      setBg('chip-wpm', customWpmColor);
-      setBg('chip-historyCount', customHistoryCountColor);
+      if (hTheme) hTheme.textContent = themeHex;
+      if (hImp) hImp.textContent = importantHex;
+      if (hAct) hAct.textContent = customActionColor;
+      if (hStop) hStop.textContent = customStopColor;
+      if (hWpm) hWpm.textContent = customWpmColor;
+      if (hHist) hHist.textContent = customHistoryCountColor;
     }
 
     function loadDataFromStorage() {
@@ -867,22 +817,33 @@
         }
       };
 
-      document.getElementById('btn-open-settings').onclick = () => {
-        document.getElementById('modal-settings').classList.remove('hidden');
-        initIroPicker();
-        selectColorTarget('theme');
-        updateColorChips();
-      };
+      document.getElementById('btn-open-settings').onclick = () => document.getElementById('modal-settings').classList.remove('hidden');
       document.getElementById('btn-close-settings').onclick = () => document.getElementById('modal-settings').classList.add('hidden');
 
-      document.querySelectorAll('.color-target-btn').forEach(btn => {
-        btn.onclick = () => selectColorTarget(btn.dataset.target);
+      document.getElementById('picker-theme-color').addEventListener('input', (e) => {
+        applyCustomColors(e.target.value, customImportantColor, customActionColor, customStopColor, customWpmColor, customHistoryCountColor);
+      });
+      document.getElementById('picker-important-color').addEventListener('input', (e) => {
+        applyCustomColors(customThemeColor, e.target.value, customActionColor, customStopColor, customWpmColor, customHistoryCountColor);
+        renderReader();
+      });
+      document.getElementById('picker-action-color').addEventListener('input', (e) => {
+        applyCustomColors(customThemeColor, customImportantColor, e.target.value, customStopColor, customWpmColor, customHistoryCountColor);
+      });
+      document.getElementById('picker-stop-color').addEventListener('input', (e) => {
+        applyCustomColors(customThemeColor, customImportantColor, customActionColor, e.target.value, customWpmColor, customHistoryCountColor);
+      });
+      document.getElementById('picker-wpm-color').addEventListener('input', (e) => {
+        applyCustomColors(customThemeColor, customImportantColor, customActionColor, customStopColor, e.target.value, customHistoryCountColor);
+      });
+      document.getElementById('picker-history-count-color').addEventListener('input', (e) => {
+        applyCustomColors(customThemeColor, customImportantColor, customActionColor, customStopColor, customWpmColor, e.target.value);
+        renderReaderHistoryList();
+        renderStandaloneTimerHistoryList();
       });
 
       document.getElementById('btn-reset-colors').onclick = () => {
         applyCustomColors("#6366f1", "#f43f5e", "#475569", "#ef4444", "#0284c7", "#6366f1");
-        selectColorTarget(activeColorTarget);
-        updateColorChips();
         renderReader();
         renderReaderHistoryList();
         renderStandaloneTimerHistoryList();
