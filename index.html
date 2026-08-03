@@ -34,7 +34,10 @@
       --brand-text: #4338ca;
       --brand-soft-bg: #f5f3ff;
       --important-color: #f43f5e;
-      --action-color: #475569; /* デフォルトのボタン色（スレートグレー） */
+      --action-color: #475569;
+      --stop-color: #ef4444;
+      --wpm-color: #0284c7;
+      --history-count-color: #6366f1;
     }
 
     body {
@@ -53,6 +56,9 @@
     .theme-brand-text { color: var(--brand-text) !important; }
     .theme-brand-light { background-color: var(--brand-soft-bg) !important; }
     .theme-action-bg { background-color: var(--action-color) !important; }
+    .theme-stop-bg { background-color: var(--stop-color) !important; }
+    .theme-wpm-text { color: var(--wpm-color) !important; }
+    .theme-history-count-text { color: var(--history-count-color) !important; }
 
     .font-mono-num { font-family: 'JetBrains Mono', monospace; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -272,13 +278,13 @@
           <!-- タイマー -->
           <div class="flex flex-col items-center md:items-end">
             <div id="standalone-timer-display" class="text-5xl md:text-6xl font-black font-mono-num text-slate-800 tracking-tight">00:00.0</div>
-            <div class="text-xs text-slate-500 font-mono-num mt-1">WPM: <span id="standalone-wpm-live" class="font-bold theme-brand-text text-sm">—</span></div>
+            <div class="text-xs text-slate-500 font-mono-num mt-1">WPM: <span id="standalone-wpm-live" class="font-bold theme-wpm-text text-sm">—</span></div>
 
             <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-end">
               <button id="btn-standalone-start" class="px-5 py-2.5 theme-brand-bg text-white font-bold text-xs rounded-xl shadow-sm active:scale-95 transition flex items-center gap-1.5 min-h-[42px]">
                 <i class="fa-solid fa-play text-xs"></i> スタート
               </button>
-              <button id="btn-standalone-stop" disabled class="px-5 py-2.5 bg-rose-500 text-white font-bold text-xs rounded-xl shadow-sm opacity-50 cursor-not-allowed transition flex items-center gap-1.5 min-h-[42px]">
+              <button id="btn-standalone-stop" disabled class="px-5 py-2.5 theme-stop-bg text-white font-bold text-xs rounded-xl shadow-sm opacity-50 cursor-not-allowed transition flex items-center gap-1.5 min-h-[42px]">
                 <i class="fa-solid fa-stop text-xs"></i> ストップ
               </button>
               <button id="btn-standalone-reset" class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition min-h-[42px]">
@@ -434,32 +440,32 @@
     </div>
   </div>
 
-  <!-- 2. 設定モーダル（カラーピッカー搭載） -->
+  <!-- 2. 設定モーダル（カラーピッカー6種搭載） -->
   <div id="modal-settings" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-slate-100 space-y-4">
+    <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-slate-100 space-y-4 max-h-[85vh] overflow-y-auto no-scrollbar">
       <div class="flex items-center justify-between border-b border-slate-100 pb-2">
         <h3 class="text-sm font-bold text-slate-800">カラーカスタマイズ</h3>
         <button id="btn-close-settings" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-base"></i></button>
       </div>
 
-      <div class="space-y-4">
-        <!-- カラーピッカー: テーマカラー -->
+      <div class="space-y-3.5">
+        <!-- 1. メインテーマカラー -->
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5">メインテーマカラー</label>
+          <label class="block text-xs font-bold text-slate-700 mb-1">メインテーマカラー</label>
           <div class="flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200">
-            <input type="color" id="picker-theme-color" value="#6366f1" class="w-10 h-10 rounded-lg border-0 cursor-pointer p-0 bg-transparent">
+            <input type="color" id="picker-theme-color" value="#6366f1" class="w-9 h-9 rounded-lg border-0 cursor-pointer p-0 bg-transparent flex-shrink-0">
             <div class="flex flex-col">
               <span id="hex-theme-color" class="text-xs font-mono-num font-bold text-slate-700">#6366f1</span>
-              <span class="text-[10px] text-slate-400">ボタンやメインアイコンの色</span>
+              <span class="text-[10px] text-slate-400">ヘッダー・タブ等のメイン色</span>
             </div>
           </div>
         </div>
 
-        <!-- カラーピッカー: 重要語カラー -->
+        <!-- 2. 重要語カラー -->
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5">重要語ハイライトカラー</label>
+          <label class="block text-xs font-bold text-slate-700 mb-1">重要語ハイライトカラー</label>
           <div class="flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200">
-            <input type="color" id="picker-important-color" value="#f43f5e" class="w-10 h-10 rounded-lg border-0 cursor-pointer p-0 bg-transparent">
+            <input type="color" id="picker-important-color" value="#f43f5e" class="w-9 h-9 rounded-lg border-0 cursor-pointer p-0 bg-transparent flex-shrink-0">
             <div class="flex flex-col">
               <span id="hex-important-color" class="text-xs font-mono-num font-bold text-slate-700">#f43f5e</span>
               <span class="text-[10px] text-slate-400">構文重要語（構文要素）の色</span>
@@ -467,14 +473,50 @@
           </div>
         </div>
 
-        <!-- カラーピッカー: 保存・追加ボタンカラー -->
+        <!-- 3. 保存・追加ボタンカラー -->
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5">保存・追加ボタンカラー</label>
+          <label class="block text-xs font-bold text-slate-700 mb-1">保存・追加ボタンカラー</label>
           <div class="flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200">
-            <input type="color" id="picker-action-color" value="#475569" class="w-10 h-10 rounded-lg border-0 cursor-pointer p-0 bg-transparent">
+            <input type="color" id="picker-action-color" value="#475569" class="w-9 h-9 rounded-lg border-0 cursor-pointer p-0 bg-transparent flex-shrink-0">
             <div class="flex flex-col">
               <span id="hex-action-color" class="text-xs font-mono-num font-bold text-slate-700">#475569</span>
               <span class="text-[10px] text-slate-400">教材追加や記録保存ボタンの色</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. タイマー停止ボタンカラー -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">タイマー停止ボタンカラー</label>
+          <div class="flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200">
+            <input type="color" id="picker-stop-color" value="#ef4444" class="w-9 h-9 rounded-lg border-0 cursor-pointer p-0 bg-transparent flex-shrink-0">
+            <div class="flex flex-col">
+              <span id="hex-stop-color" class="text-xs font-mono-num font-bold text-slate-700">#ef4444</span>
+              <span class="text-[10px] text-slate-400">タイマーの「停止」ボタンの色</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. WPMカラー -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">WPM表示カラー</label>
+          <div class="flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200">
+            <input type="color" id="picker-wpm-color" value="#0284c7" class="w-9 h-9 rounded-lg border-0 cursor-pointer p-0 bg-transparent flex-shrink-0">
+            <div class="flex flex-col">
+              <span id="hex-wpm-color" class="text-xs font-mono-num font-bold text-slate-700">#0284c7</span>
+              <span class="text-[10px] text-slate-400">タイマーのWPM数値の色</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. 音読履歴の回数カラー -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">音読履歴の回数カラー</label>
+          <div class="flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200">
+            <input type="color" id="picker-history-count-color" value="#6366f1" class="w-9 h-9 rounded-lg border-0 cursor-pointer p-0 bg-transparent flex-shrink-0">
+            <div class="flex flex-col">
+              <span id="hex-history-count-color" class="text-xs font-mono-num font-bold text-slate-700">#6366f1</span>
+              <span class="text-[10px] text-slate-400">履歴内の「〇回目」テキストの色</span>
             </div>
           </div>
         </div>
@@ -595,10 +637,13 @@
     let isTreeInit = false;
     let lastSelectedFolderId = localStorage.getItem('ondoc_last_folder_v5') || "";
 
-    // カラー設定 (カラーピッカー)
+    // カラー設定 (カラーピッカー 6種)
     let customThemeColor = localStorage.getItem('ondoc_theme_color_v5') || "#6366f1";
     let customImportantColor = localStorage.getItem('ondoc_important_color_v5') || "#f43f5e";
     let customActionColor = localStorage.getItem('ondoc_action_color_v5') || "#475569";
+    let customStopColor = localStorage.getItem('ondoc_stop_color_v5') || "#ef4444";
+    let customWpmColor = localStorage.getItem('ondoc_wpm_color_v5') || "#0284c7";
+    let customHistoryCountColor = localStorage.getItem('ondoc_history_count_color_v5') || "#6366f1";
 
     // 読解表示設定
     let config = {
@@ -626,7 +671,14 @@
     let standaloneFreeHistory = JSON.parse(localStorage.getItem('ondoc_free_history') || '[]');
 
     document.addEventListener('DOMContentLoaded', () => {
-      applyCustomColors(customThemeColor, customImportantColor, customActionColor);
+      applyCustomColors(
+        customThemeColor,
+        customImportantColor,
+        customActionColor,
+        customStopColor,
+        customWpmColor,
+        customHistoryCountColor
+      );
       loadDataFromStorage();
       setupTimerBoxTemplates();
       setupEventListeners();
@@ -635,19 +687,28 @@
       switchView('reader');
     });
 
-    function applyCustomColors(themeHex, importantHex, actionHex) {
+    function applyCustomColors(themeHex, importantHex, actionHex, stopHex, wpmHex, historyCountHex) {
       customThemeColor = themeHex;
       customImportantColor = importantHex;
       customActionColor = actionHex || "#475569";
+      customStopColor = stopHex || "#ef4444";
+      customWpmColor = wpmHex || "#0284c7";
+      customHistoryCountColor = historyCountHex || "#6366f1";
 
       localStorage.setItem('ondoc_theme_color_v5', themeHex);
       localStorage.setItem('ondoc_important_color_v5', importantHex);
       localStorage.setItem('ondoc_action_color_v5', customActionColor);
+      localStorage.setItem('ondoc_stop_color_v5', customStopColor);
+      localStorage.setItem('ondoc_wpm_color_v5', customWpmColor);
+      localStorage.setItem('ondoc_history_count_color_v5', customHistoryCountColor);
 
       document.documentElement.style.setProperty('--brand-primary', themeHex);
       document.documentElement.style.setProperty('--brand-text', themeHex);
       document.documentElement.style.setProperty('--important-color', importantHex);
       document.documentElement.style.setProperty('--action-color', customActionColor);
+      document.documentElement.style.setProperty('--stop-color', customStopColor);
+      document.documentElement.style.setProperty('--wpm-color', customWpmColor);
+      document.documentElement.style.setProperty('--history-count-color', customHistoryCountColor);
 
       document.getElementById('theme-color-meta').setAttribute('content', themeHex);
 
@@ -655,16 +716,30 @@
       const pTheme = document.getElementById('picker-theme-color');
       const pImp = document.getElementById('picker-important-color');
       const pAct = document.getElementById('picker-action-color');
+      const pStop = document.getElementById('picker-stop-color');
+      const pWpm = document.getElementById('picker-wpm-color');
+      const pHist = document.getElementById('picker-history-count-color');
+
       if (pTheme) pTheme.value = themeHex;
       if (pImp) pImp.value = importantHex;
       if (pAct) pAct.value = customActionColor;
+      if (pStop) pStop.value = customStopColor;
+      if (pWpm) pWpm.value = customWpmColor;
+      if (pHist) pHist.value = customHistoryCountColor;
 
       const hTheme = document.getElementById('hex-theme-color');
       const hImp = document.getElementById('hex-important-color');
       const hAct = document.getElementById('hex-action-color');
+      const hStop = document.getElementById('hex-stop-color');
+      const hWpm = document.getElementById('hex-wpm-color');
+      const hHist = document.getElementById('hex-history-count-color');
+
       if (hTheme) hTheme.textContent = themeHex;
       if (hImp) hImp.textContent = importantHex;
       if (hAct) hAct.textContent = customActionColor;
+      if (hStop) hStop.textContent = customStopColor;
+      if (hWpm) hWpm.textContent = customWpmColor;
+      if (hHist) hHist.textContent = customHistoryCountColor;
     }
 
     function loadDataFromStorage() {
@@ -728,7 +803,7 @@
             <div class="flex items-center gap-3">
               <div id="reader-timer-display-${pos}" class="text-3xl md:text-4xl font-black font-mono-num text-slate-800 tracking-tight">00:00.0</div>
               <div class="text-xs font-mono-num text-slate-500">
-                WPM: <span id="reader-wpm-live-${pos}" class="font-bold theme-brand-text text-sm">—</span>
+                WPM: <span id="reader-wpm-live-${pos}" class="font-bold theme-wpm-text text-sm">—</span>
               </div>
             </div>
 
@@ -747,7 +822,7 @@
               <button id="btn-reader-start-${pos}" class="px-3.5 py-2 theme-brand-bg text-white font-bold text-xs rounded-xl shadow-sm active:scale-95 transition flex items-center gap-1 min-h-[36px]">
                 <i class="fa-solid fa-play text-[10px]"></i> 開始
               </button>
-              <button id="btn-reader-stop-${pos}" disabled class="px-3.5 py-2 bg-rose-500 text-white font-bold text-xs rounded-xl shadow-sm opacity-50 cursor-not-allowed transition flex items-center gap-1 min-h-[36px]">
+              <button id="btn-reader-stop-${pos}" disabled class="px-3.5 py-2 theme-stop-bg text-white font-bold text-xs rounded-xl shadow-sm opacity-50 cursor-not-allowed transition flex items-center gap-1 min-h-[36px]">
                 <i class="fa-solid fa-stop text-[10px]"></i> 停止
               </button>
               <button id="btn-reader-reset-${pos}" class="px-3 py-2 bg-white text-slate-600 font-semibold text-xs rounded-xl border border-slate-200 transition hover:bg-slate-50 min-h-[36px]">
@@ -824,19 +899,32 @@
 
       // カラーピッカー調整
       document.getElementById('picker-theme-color').addEventListener('input', (e) => {
-        applyCustomColors(e.target.value, customImportantColor, customActionColor);
+        applyCustomColors(e.target.value, customImportantColor, customActionColor, customStopColor, customWpmColor, customHistoryCountColor);
       });
       document.getElementById('picker-important-color').addEventListener('input', (e) => {
-        applyCustomColors(customThemeColor, e.target.value, customActionColor);
+        applyCustomColors(customThemeColor, e.target.value, customActionColor, customStopColor, customWpmColor, customHistoryCountColor);
         renderReader();
       });
       document.getElementById('picker-action-color').addEventListener('input', (e) => {
-        applyCustomColors(customThemeColor, customImportantColor, e.target.value);
+        applyCustomColors(customThemeColor, customImportantColor, e.target.value, customStopColor, customWpmColor, customHistoryCountColor);
+      });
+      document.getElementById('picker-stop-color').addEventListener('input', (e) => {
+        applyCustomColors(customThemeColor, customImportantColor, customActionColor, e.target.value, customWpmColor, customHistoryCountColor);
+      });
+      document.getElementById('picker-wpm-color').addEventListener('input', (e) => {
+        applyCustomColors(customThemeColor, customImportantColor, customActionColor, customStopColor, e.target.value, customHistoryCountColor);
+      });
+      document.getElementById('picker-history-count-color').addEventListener('input', (e) => {
+        applyCustomColors(customThemeColor, customImportantColor, customActionColor, customStopColor, customWpmColor, e.target.value);
+        renderReaderHistoryList();
+        renderStandaloneTimerHistoryList();
       });
 
       document.getElementById('btn-reset-colors').onclick = () => {
-        applyCustomColors("#6366f1", "#f43f5e", "#475569");
+        applyCustomColors("#6366f1", "#f43f5e", "#475569", "#ef4444", "#0284c7", "#6366f1");
         renderReader();
+        renderReaderHistoryList();
+        renderStandaloneTimerHistoryList();
       };
 
       // 教材追加（JSONなし）モーダル呼び出し元の記憶
@@ -976,6 +1064,8 @@
             activeText.readCount += 1;
             saveToLocalStorage();
             document.getElementById('standalone-read-count').textContent = activeText.readCount + 1;
+            renderTree();
+            renderStandaloneTimerTree();
             return;
           }
         }
@@ -990,6 +1080,8 @@
             activeText.readCount = Math.max(0, activeText.readCount - 1);
             saveToLocalStorage();
             document.getElementById('standalone-read-count').textContent = activeText.readCount + 1;
+            renderTree();
+            renderStandaloneTimerTree();
             return;
           }
         }
@@ -1154,6 +1246,7 @@
               document.getElementById('standalone-word-count').value = t.wordCount || 150;
               document.getElementById('standalone-read-count').textContent = t.readCount + 1;
               renderTree();
+              renderStandaloneTimerHistoryList();
               switchView('timer');
             }
           };
@@ -1498,7 +1591,7 @@
           <div class="p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl flex flex-col gap-1">
             <div class="flex items-center justify-between text-xs">
               <div class="flex items-center gap-1.5 font-mono-num font-bold text-slate-700">
-                <span class="theme-brand-text">${r.count}回目</span>
+                <span class="theme-history-count-text">${r.count}回目</span>
                 <span>${formatTime(r.timeMs)}</span>
                 <span class="text-slate-500 text-[11px]">(${r.wpm || 0} WPM)</span>
                 ${starsHtml}
@@ -1568,7 +1661,6 @@
 
       document.getElementById('modal-simple-textbook').classList.add('hidden');
 
-      // 呼出元のタブにとどまる挙動制御
       if (simpleTextbookSourceTab === 'library') {
         renderTree();
         switchView('library');
@@ -1741,7 +1833,8 @@
       if (standaloneTimerRunning) stopStandaloneTimer();
 
       const wordCount = parseInt(document.getElementById('standalone-word-count').value, 10) || 0;
-      const readCountVal = parseInt(document.getElementById('standalone-read-count').textContent, 10) || 1;
+      const countEl = document.getElementById('standalone-read-count');
+      const readCountVal = parseInt(countEl.textContent, 10) || 1;
       const wpm = computeWpm(wordCount, ms);
       const memoText = document.getElementById('standalone-memo').value.trim();
 
@@ -1758,13 +1851,17 @@
       if (standaloneSelectedTextId === 'free') {
         standaloneFreeHistory.unshift(record);
         localStorage.setItem('ondoc_free_history', JSON.stringify(standaloneFreeHistory));
+        // フリーモードでも回数をカウントアップ
+        countEl.textContent = readCountVal + 1;
       } else {
         const activeText = texts.find(t => t.id === standaloneSelectedTextId);
         if (activeText) {
-          activeText.readCount = readCountVal;
+          activeText.readCount = readCountVal; // 累計回数を更新
           activeText.wordCount = wordCount;
           activeText.history.unshift(record);
           saveToLocalStorage();
+          // 次の周回数の表示用に+1
+          countEl.textContent = activeText.readCount + 1;
         }
       }
 
@@ -1773,6 +1870,7 @@
       resetStandaloneTimer();
       renderStandaloneTimerHistoryList();
       renderTree();
+      renderStandaloneTimerTree();
     }
 
     function renderStandaloneTimerHistoryList() {
@@ -1800,7 +1898,7 @@
           <div class="p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl flex flex-col gap-1">
             <div class="flex items-center justify-between text-xs">
               <div class="flex items-center gap-1.5 font-mono-num font-bold text-slate-700">
-                <span class="theme-brand-text">${r.count}回目</span>
+                <span class="theme-history-count-text">${r.count}回目</span>
                 <span>${formatTime(r.timeMs)}</span>
                 <span class="text-slate-500 text-[11px]">(${r.wpm || 0} WPM)</span>
                 ${starsHtml}
@@ -1965,7 +2063,10 @@
         freeHistory: standaloneFreeHistory,
         customThemeColor: customThemeColor,
         customImportantColor: customImportantColor,
-        customActionColor: customActionColor
+        customActionColor: customActionColor,
+        customStopColor: customStopColor,
+        customWpmColor: customWpmColor,
+        customHistoryCountColor: customHistoryCountColor
       };
 
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
@@ -1989,13 +2090,14 @@
             folders = imported.folders;
             texts = imported.texts;
             if (imported.freeHistory) standaloneFreeHistory = imported.freeHistory;
-            if (imported.customThemeColor || imported.customImportantColor || imported.customActionColor) {
-              applyCustomColors(
-                imported.customThemeColor || "#6366f1",
-                imported.customImportantColor || "#f43f5e",
-                imported.customActionColor || "#475569"
-              );
-            }
+            applyCustomColors(
+              imported.customThemeColor || "#6366f1",
+              imported.customImportantColor || "#f43f5e",
+              imported.customActionColor || "#475569",
+              imported.customStopColor || "#ef4444",
+              imported.customWpmColor || "#0284c7",
+              imported.customHistoryCountColor || "#6366f1"
+            );
             if (texts.length > 0) currentTextId = texts[0].id;
             saveToLocalStorage();
             localStorage.setItem('ondoc_free_history', JSON.stringify(standaloneFreeHistory));
@@ -2022,3 +2124,6 @@
   </script>
 </body>
 </html>
+```
+
+---
