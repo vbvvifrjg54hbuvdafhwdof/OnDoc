@@ -12,20 +12,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="OnDoc">
 
-  <!-- iOS用 Apple Touch Icon -->
+  <!-- iOS用 Apple Touch Icon / Favicon -->
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='28' fill='%236366f1'/><path d='M25 38 C35 32, 45 37, 50 42 C55 37, 65 32, 75 38 L75 68 C65 62, 55 67, 50 72 C45 67, 35 62, 25 68 Z' fill='none' stroke='white' stroke-width='6' stroke-linejoin='round'/><line x1='50' y1='42' x2='50' y2='72' stroke='white' stroke-width='6'/></svg>">
-
-  <!-- PWA Web Manifest -->
   <link rel="manifest" href="./manifest.json">
-
-  <!-- SVG Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='28' fill='%236366f1'/><path d='M25 38 C35 32, 45 37, 50 42 C55 37, 65 32, 75 38 L75 68 C65 62, 55 67, 50 72 C45 67, 35 62, 25 68 Z' fill='none' stroke='white' stroke-width='6' stroke-linejoin='round'/><line x1='50' y1='42' x2='50' y2='72' stroke='white' stroke-width='6'/></svg>">
 
-  <!-- Tailwind CSS -->
+  <!-- Tailwind CSS / Icons / Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   
   <style>
@@ -47,11 +41,6 @@
       color: #1e293b;
     }
 
-    .theme-card {
-      background-color: #ffffff;
-      border-color: #e2e8f0;
-    }
-
     .theme-brand-bg { background-color: var(--brand-primary) !important; }
     .theme-brand-text { color: var(--brand-text) !important; }
     .theme-brand-light { background-color: var(--brand-soft-bg) !important; }
@@ -64,11 +53,8 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     
-    .chunk-touch:active {
-      background-color: var(--brand-soft-bg) !important;
-    }
+    .chunk-touch:active { background-color: var(--brand-soft-bg) !important; }
 
-    /* 英文と和訳の密着レイアウト */
     .sentence-block {
       display: block !important;
       margin-bottom: 1.2rem !important;
@@ -89,9 +75,7 @@
       box-sizing: border-box !important;
     }
 
-    .mode-no-trans .chunk-box {
-      margin-bottom: 0.2rem !important;
-    }
+    .mode-no-trans .chunk-box { margin-bottom: 0.2rem !important; }
 
     .chunk-en {
       display: inline-block !important;
@@ -115,7 +99,6 @@
       font-weight: 600 !important;
       white-space: normal !important;
       word-break: break-all !important;
-      overflow-wrap: break-word !important;
       pointer-events: none !important;
       z-index: 10 !important;
     }
@@ -132,11 +115,9 @@
 </head>
 <body class="min-h-screen flex flex-col pb-24 md:pb-6 selection:bg-slate-200">
 
-  <!-- ヘッダー（スマホ最適化） -->
+  <!-- ヘッダー -->
   <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 shadow-sm">
     <div class="max-w-4xl mx-auto px-3 py-2 flex flex-col gap-2">
-      
-      <!-- タイトル & 設定歯車 -->
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 theme-brand-bg rounded-xl flex items-center justify-center text-white shadow-sm">
@@ -156,7 +137,7 @@
         </div>
       </div>
 
-      <!-- 読解用コントロールバー -->
+      <!-- 読解コントロールバー -->
       <div id="toolbar-controls" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
         <button id="toggle-slash" class="flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1 bg-white border border-slate-200 text-slate-700 shadow-sm active:scale-95">
           <span class="font-bold theme-brand-text">/</span> スラッシュ
@@ -176,7 +157,6 @@
           <i class="fa-solid fa-leaf text-emerald-500"></i> 白文
         </button>
       </div>
-
     </div>
   </header>
 
@@ -193,16 +173,10 @@
           </button>
         </div>
 
-        <!-- 【上部タイマーボックス】 -->
         <div id="reader-timer-top" class="timer-box-template mb-5"></div>
-
-        <!-- 英文チャンク表示領域 -->
         <div id="reader-content" class="text-base md:text-lg my-6"></div>
-
-        <!-- 【下部タイマーボックス】 -->
         <div id="reader-timer-bottom" class="timer-box-template mt-6"></div>
 
-        <!-- 【下部タイマー直下：音読履歴リスト】 -->
         <div id="reader-history-section" class="mt-6 pt-4 border-t border-slate-100 space-y-3">
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
@@ -247,7 +221,6 @@
 
     <!-- VIEW 3: 音読タイマー画面 -->
     <section id="view-timer" class="hidden space-y-4">
-      <!-- アプリ外・登録教材 タイマー本体 -->
       <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-slate-200/80 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
           <div class="flex-1 min-w-[180px]">
@@ -262,7 +235,6 @@
         </div>
 
         <div class="grid md:grid-cols-2 gap-6 items-center my-2">
-          <!-- 周回数 -->
           <div class="flex flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-slate-100 pb-4 md:pb-0">
             <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">現在の音読回数</span>
             <div class="flex items-baseline gap-1">
@@ -275,7 +247,6 @@
             </div>
           </div>
 
-          <!-- タイマー -->
           <div class="flex flex-col items-center md:items-end">
             <div id="standalone-timer-display" class="text-5xl md:text-6xl font-black font-mono-num text-slate-800 tracking-tight">00:00.0</div>
             <div class="text-xs text-slate-500 font-mono-num mt-1">WPM: <span id="standalone-wpm-live" class="font-bold theme-wpm-text text-sm">—</span></div>
@@ -294,7 +265,6 @@
           </div>
         </div>
 
-        <!-- 記録メモ -->
         <div class="border-t border-slate-100 pt-3 space-y-3">
           <textarea id="standalone-memo" rows="2" placeholder="音読メモ・気付き..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-base md:text-xs font-medium focus:outline-none focus:ring-1 focus:ring-slate-300"></textarea>
           <div class="flex items-center justify-between flex-wrap gap-2">
@@ -312,7 +282,6 @@
         </div>
       </div>
 
-      <!-- JSONなし登録教材セレクター -->
       <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-slate-200/80 space-y-3">
         <div class="flex items-center justify-between border-b border-slate-100 pb-2 flex-wrap gap-2">
           <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
@@ -333,7 +302,6 @@
         <div id="standalone-tree-container" class="space-y-1 text-sm"></div>
       </div>
 
-      <!-- 履歴カード -->
       <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-slate-200/80 space-y-3">
         <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
           <i class="fa-solid fa-clock-rotate-left theme-brand-text"></i> 音読履歴ログ
@@ -380,14 +348,16 @@
       </div>
 
       <div class="flex justify-end gap-2 pt-1">
-        <button id="btn-cancel-import" type="button" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold min-h-[42px]">キャンセル</button>
-        <button id="btn-save-import" type="button" class="px-5 py-2.5 theme-brand-bg text-white text-xs font-semibold shadow-sm min-h-[42px]">登録して読む</button>
+        <button id="btn-cancel-import" type="button" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold min-h-[42px] active:scale-95 transition">キャンセル</button>
+        <button id="btn-save-import" type="button" class="px-5 py-2.5 theme-action-bg hover:opacity-90 active:scale-95 text-white text-xs font-bold rounded-xl shadow-sm transition min-h-[42px]">
+          登録して読む
+        </button>
       </div>
     </section>
 
   </main>
 
-  <!-- 下部固定ナビゲーションバー（スマホ最適化・高め領域） -->
+  <!-- ナビゲーションバー -->
   <nav class="fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 z-40 px-2 py-0 flex justify-around items-stretch h-16 shadow-lg backdrop-blur-md bg-opacity-95">
     <button id="nav-reader" class="flex-1 flex flex-col items-center justify-center gap-1 theme-brand-text font-bold transition py-1 active:scale-95">
       <i class="fa-solid fa-book-reader text-xl"></i>
@@ -408,7 +378,7 @@
   </nav>
 
   <!-- モーダル類 -->
-  <!-- 1. 手持ち参考書・教材追加モーダル (JSONなし) -->
+  <!-- 1. 参考書追加モーダル -->
   <div id="modal-simple-textbook" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-slate-100 space-y-3">
       <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
@@ -440,7 +410,7 @@
     </div>
   </div>
 
-  <!-- 2. 設定モーダル（カラーピッカー6種搭載） -->
+  <!-- 2. 設定モーダル -->
   <div id="modal-settings" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-slate-100 space-y-4 max-h-[85vh] overflow-y-auto no-scrollbar">
       <div class="flex items-center justify-between border-b border-slate-100 pb-2">
@@ -449,7 +419,6 @@
       </div>
 
       <div class="space-y-3.5">
-        <!-- 1. メインテーマカラー -->
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">メインテーマカラー</label>
           <div class="flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200">
@@ -461,7 +430,6 @@
           </div>
         </div>
 
-        <!-- 2. 重要語カラー -->
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">重要語ハイライトカラー</label>
           <div class="flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200">
@@ -473,7 +441,6 @@
           </div>
         </div>
 
-        <!-- 3. 保存・追加ボタンカラー -->
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">保存・追加ボタンカラー</label>
           <div class="flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200">
@@ -485,7 +452,6 @@
           </div>
         </div>
 
-        <!-- 4. タイマー停止ボタンカラー -->
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">タイマー停止ボタンカラー</label>
           <div class="flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200">
@@ -497,7 +463,6 @@
           </div>
         </div>
 
-        <!-- 5. WPMカラー -->
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">WPM表示カラー</label>
           <div class="flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200">
@@ -509,7 +474,6 @@
           </div>
         </div>
 
-        <!-- 6. 音読履歴の回数カラー -->
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">音読履歴の回数カラー</label>
           <div class="flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200">
@@ -540,7 +504,7 @@
     </div>
   </div>
 
-  <!-- 4. 削除確認モーダル -->
+  <!-- 4. 削除確認モーダル（ライブラリ＆音読タイマータブ共通） -->
   <div id="modal-delete" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-slate-100 space-y-4 text-center">
       <div class="w-10 h-10 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center mx-auto text-lg">
@@ -557,18 +521,14 @@
     </div>
   </div>
 
-  <!-- アプリJSロジック -->
+  <!-- JavaScript ロジック -->
   <script>
-    // Service Worker 登録
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('SW registered:', reg.scope))
-          .catch(err => console.error('SW failed:', err));
+        navigator.serviceWorker.register('./sw.js').catch(err => console.error('SW failed:', err));
       });
     }
 
-    // PWA インストールプロンプト制御
     let deferredPrompt = null;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
@@ -577,7 +537,6 @@
       if (installBtn) installBtn.classList.remove('hidden');
     });
 
-    // 初期サンプルデータ
     const SAMPLE_FOLDERS = [
       { id: "f-1", name: "市販英単語帳・長文", parentId: null },
       { id: "f-2", name: "人工知能 (AI)", parentId: null }
@@ -607,37 +566,23 @@
               { "en": "In recent years,", "is_important": false, "ja": "近年、" },
               { "en": "artificial intelligence has advanced", "is_important": false, "ja": "人工知能は進化してきた" },
               { "en": "at an unprecedented speed,", "is_important": false, "ja": "前例のない速度で、" },
-              { "en": "changing the way", "is_important": false, "ja": "〜という方法を変えながら" },
-              { "en": "we live and work.", "is_important": false, "ja": "私たちが生活し働く（方法を）。" }
-            ]
-          },
-          {
-            "sentence_id": 2,
-            "chunks": [
-              { "en": "Although many experts predict", "is_important": true, "ja": "多くの専門家は〜と予測しているが、" },
-              { "en": "that AI will automate routine tasks", "is_important": false, "ja": "AIが定型業務を自動化し" },
-              { "en": "and increase productivity,", "is_important": false, "ja": "生産性を高めると（予測しているが）、" },
-              { "en": "others worry", "is_important": false, "ja": "ほかの人々は懸念している" },
-              { "en": "that it could lead to", "is_important": false, "ja": "それが〜につながる可能性があると" },
-              { "en": "widespread job loss.", "is_important": false, "ja": "広範な雇用喪失に。" }
+              { "en": "changing the way we live and work.", "is_important": false, "ja": "私たちが生活し働く方法を変えながら。" }
             ]
           }
         ]
       }
     ];
 
-    // アプリ状態
     let folders = [];
     let texts = [];
     let currentTextId = null;
     let targetParentFolderId = null;
     let deleteTarget = null;
-    let simpleTextbookSourceTab = 'library'; // モーダル呼出元 ('library' または 'timer')
+    let simpleTextbookSourceTab = 'library';
     let expandedFolderIds = new Set();
     let isTreeInit = false;
     let lastSelectedFolderId = localStorage.getItem('ondoc_last_folder_v5') || "";
 
-    // カラー設定 (カラーピッカー 6種)
     let customThemeColor = localStorage.getItem('ondoc_theme_color_v5') || "#6366f1";
     let customImportantColor = localStorage.getItem('ondoc_important_color_v5') || "#f43f5e";
     let customActionColor = localStorage.getItem('ondoc_action_color_v5') || "#475569";
@@ -645,40 +590,16 @@
     let customWpmColor = localStorage.getItem('ondoc_wpm_color_v5') || "#0284c7";
     let customHistoryCountColor = localStorage.getItem('ondoc_history_count_color_v5') || "#6366f1";
 
-    // 読解表示設定
-    let config = {
-      showSlash: true,
-      showHighlight: true,
-      transMode: 'tap',
-      isRaw: false
-    };
+    let config = { showSlash: true, showHighlight: true, transMode: 'tap', isRaw: false };
     let tappedChunks = {};
 
-    // 読解タイマー状態（上下完全同期）
-    let readerTimerRunning = false;
-    let readerTimerStart = 0;
-    let readerElapsedBase = 0;
-    let readerTimerInterval = null;
-    let readerSelectedRating = 0;
-
-    // 単独タイマー状態
-    let standaloneTimerRunning = false;
-    let standaloneTimerStart = 0;
-    let standaloneElapsedBase = 0;
-    let standaloneTimerInterval = null;
-    let standaloneSelectedRating = 0;
+    let readerTimerRunning = false, readerTimerStart = 0, readerElapsedBase = 0, readerTimerInterval = null, readerSelectedRating = 0;
+    let standaloneTimerRunning = false, standaloneTimerStart = 0, standaloneElapsedBase = 0, standaloneTimerInterval = null, standaloneSelectedRating = 0;
     let standaloneSelectedTextId = 'free';
     let standaloneFreeHistory = JSON.parse(localStorage.getItem('ondoc_free_history') || '[]');
 
     document.addEventListener('DOMContentLoaded', () => {
-      applyCustomColors(
-        customThemeColor,
-        customImportantColor,
-        customActionColor,
-        customStopColor,
-        customWpmColor,
-        customHistoryCountColor
-      );
+      applyCustomColors(customThemeColor, customImportantColor, customActionColor, customStopColor, customWpmColor, customHistoryCountColor);
       loadDataFromStorage();
       setupTimerBoxTemplates();
       setupEventListeners();
@@ -712,7 +633,6 @@
 
       document.getElementById('theme-color-meta').setAttribute('content', themeHex);
 
-      // カラーピッカー表示更新
       const pTheme = document.getElementById('picker-theme-color');
       const pImp = document.getElementById('picker-important-color');
       const pAct = document.getElementById('picker-action-color');
@@ -760,7 +680,6 @@
         saveToLocalStorage();
       }
 
-      // JSONデータの語数を自動計算・同期
       texts.forEach(t => {
         if (!t.data) t.data = [];
         if (t.data.length > 0) {
@@ -883,7 +802,6 @@
     }
 
     function setupEventListeners() {
-      // PWA Install
       document.getElementById('btn-pwa-install').onclick = async () => {
         if (deferredPrompt) {
           deferredPrompt.prompt();
@@ -893,11 +811,9 @@
         }
       };
 
-      // 設定モーダル
       document.getElementById('btn-open-settings').onclick = () => document.getElementById('modal-settings').classList.remove('hidden');
       document.getElementById('btn-close-settings').onclick = () => document.getElementById('modal-settings').classList.add('hidden');
 
-      // カラーピッカー調整
       document.getElementById('picker-theme-color').addEventListener('input', (e) => {
         applyCustomColors(e.target.value, customImportantColor, customActionColor, customStopColor, customWpmColor, customHistoryCountColor);
       });
@@ -927,31 +843,24 @@
         renderStandaloneTimerHistoryList();
       };
 
-      // 教材追加（JSONなし）モーダル呼び出し元の記憶
       document.getElementById('btn-add-simple-text-lib').onclick = () => { simpleTextbookSourceTab = 'library'; openSimpleTextbookModal(null); };
       document.getElementById('btn-add-simple-text-timer').onclick = () => { simpleTextbookSourceTab = 'timer'; openSimpleTextbookModal(null); };
       document.getElementById('btn-cancel-simple-textbook').onclick = () => document.getElementById('modal-simple-textbook').classList.add('hidden');
       document.getElementById('btn-save-simple-textbook').onclick = handleSaveSimpleTextbook;
 
-      // 音読タイマータブからのフォルダ追加
       document.getElementById('btn-add-folder-timer').onclick = () => openFolderModal(null);
-
-      // JSON追加タブからのフォルダ作成
       document.getElementById('btn-import-add-folder').onclick = () => openFolderModal(null);
 
-      // ナビゲーション切り替え
       document.getElementById('nav-reader').onclick = () => switchView('reader');
       document.getElementById('nav-library').onclick = () => switchView('library');
       document.getElementById('nav-timer').onclick = () => switchView('timer');
       document.getElementById('nav-import').onclick = () => switchView('import');
 
-      // インポート操作
       document.getElementById('btn-cancel-import').onclick = () => switchView('reader');
       document.getElementById('btn-add-root-folder').onclick = () => openFolderModal(null);
       document.getElementById('btn-cancel-folder').onclick = closeFolderModal;
       document.getElementById('btn-save-folder').onclick = handleSaveFolder;
 
-      // バックアップ / 復元
       document.getElementById('btn-export-data').onclick = handleExportData;
       document.getElementById('btn-import-data').onclick = () => document.getElementById('file-input-backup').click();
       document.getElementById('file-input-backup').onchange = handleImportBackupFile;
@@ -970,7 +879,6 @@
         }
       };
 
-      // 読解トグル
       document.getElementById('toggle-slash').onclick = () => { config.showSlash = !config.showSlash; updateToggleStyles(); renderReader(); };
       document.getElementById('toggle-highlight').onclick = () => { config.showHighlight = !config.showHighlight; updateToggleStyles(); renderReader(); };
       document.getElementById('toggle-raw').onclick = () => { config.isRaw = !config.isRaw; updateToggleStyles(); renderReader(); };
@@ -986,12 +894,11 @@
 
       document.getElementById('btn-save-import').onclick = handleSaveImport;
 
-      // 削除モーダル
       document.getElementById('btn-open-delete').onclick = () => {
         const activeText = texts.find(t => t.id === currentTextId);
         if (!activeText) return;
         deleteTarget = { type: 'text', id: activeText.id };
-        document.getElementById('delete-modal-heading').textContent = "文章を削除しますか？";
+        document.getElementById('delete-modal-heading').textContent = "教材を削除しますか？";
         document.getElementById('delete-target-title').textContent = `「${activeText.title}」`;
         document.getElementById('modal-delete').classList.remove('hidden');
       };
@@ -999,7 +906,6 @@
       document.getElementById('btn-cancel-delete').onclick = () => document.getElementById('modal-delete').classList.add('hidden');
       document.getElementById('btn-confirm-delete').onclick = handleConfirmDelete;
 
-      // --- 【読解上下タイマー】 イベントバインド ---
       ['top', 'bottom'].forEach(pos => {
         document.getElementById(`btn-reader-start-${pos}`).onclick = startReaderTimer;
         document.getElementById(`btn-reader-stop-${pos}`).onclick = stopReaderTimer;
@@ -1039,7 +945,6 @@
         });
       });
 
-      // --- 【単独音読タイマー】 イベント ---
       document.getElementById('btn-standalone-start').onclick = startStandaloneTimer;
       document.getElementById('btn-standalone-stop').onclick = stopStandaloneTimer;
       document.getElementById('btn-standalone-reset').onclick = resetStandaloneTimer;
@@ -1115,15 +1020,12 @@
 
       ['tap', 'all', 'none'].forEach(mode => {
         const btn = document.getElementById(`mode-${mode}`);
-        if (config.transMode === mode) {
-          btn.className = "px-2.5 py-1 rounded-lg transition bg-white theme-brand-text font-bold shadow-sm";
-        } else {
-          btn.className = "px-2.5 py-1 rounded-lg transition text-slate-500 font-medium";
-        }
+        btn.className = config.transMode === mode
+          ? "px-2.5 py-1 rounded-lg transition bg-white theme-brand-text font-bold shadow-sm"
+          : "px-2.5 py-1 rounded-lg transition text-slate-500 font-medium";
       });
     }
 
-    // ------------------- ライブラリツリー表示 -------------------
     function renderTree() {
       const container = document.getElementById('tree-container');
       container.innerHTML = '';
@@ -1141,7 +1043,6 @@
         subFolders.forEach(f => {
           const li = document.createElement('li');
           const isExpanded = expandedFolderIds.has(f.id);
-
           const childTextCount = texts.filter(t => t.folderId === f.id).length;
           const childFolderCount = folders.filter(sub => sub.parentId === f.id).length;
           const totalItems = childTextCount + childFolderCount;
@@ -1171,28 +1072,18 @@
 
           const addTextBtn = folderHeader.querySelector('.btn-add-text-to-folder');
           if (addTextBtn) {
-            addTextBtn.onclick = (e) => { 
-              e.preventDefault();
-              e.stopPropagation(); 
-              simpleTextbookSourceTab = 'library'; 
-              openSimpleTextbookModal(f.id); 
-            };
+            addTextBtn.onclick = (e) => { e.preventDefault(); e.stopPropagation(); simpleTextbookSourceTab = 'library'; openSimpleTextbookModal(f.id); };
           }
 
           const addSubBtn = folderHeader.querySelector('.btn-add-sub');
           if (addSubBtn) {
-            addSubBtn.onclick = (e) => { 
-              e.preventDefault();
-              e.stopPropagation(); 
-              openFolderModal(f.id); 
-            };
+            addSubBtn.onclick = (e) => { e.preventDefault(); e.stopPropagation(); openFolderModal(f.id); };
           }
 
           const delFolderBtn = folderHeader.querySelector('.btn-del-folder');
           if (delFolderBtn) {
             delFolderBtn.onclick = (e) => {
-              e.preventDefault();
-              e.stopPropagation();
+              e.preventDefault(); e.stopPropagation();
               deleteTarget = { type: 'folder', id: f.id };
               document.getElementById('delete-modal-heading').textContent = "フォルダを削除しますか？";
               document.getElementById('delete-target-title').textContent = `「${f.name}」とその中の全データ`;
@@ -1201,10 +1092,7 @@
           }
 
           li.appendChild(folderHeader);
-
-          if (isExpanded) {
-            li.appendChild(buildFolderTree(f.id, level + 1));
-          }
+          if (isExpanded) li.appendChild(buildFolderTree(f.id, level + 1));
           ul.appendChild(li);
         });
 
@@ -1254,8 +1142,7 @@
           const delBtn = li.querySelector('.btn-del-text');
           if (delBtn) {
             delBtn.onclick = (e) => {
-              e.preventDefault();
-              e.stopPropagation();
+              e.preventDefault(); e.stopPropagation();
               deleteTarget = { type: 'text', id: t.id };
               document.getElementById('delete-modal-heading').textContent = "教材を削除しますか？";
               document.getElementById('delete-target-title').textContent = `「${t.title}」`;
@@ -1313,7 +1200,6 @@
       return path.join(' / ');
     }
 
-    // ------------------- 読解画面表示 -------------------
     function renderReader() {
       const activeText = texts.find(t => t.id === currentTextId);
       const readerContent = document.getElementById('reader-content');
@@ -1344,7 +1230,6 @@
       headerFolderTag.textContent = getFolderPath(activeText.folderId);
       readerContent.innerHTML = '';
 
-      // JSONデータの語数を自動計測して同期
       if (activeText.data && activeText.data.length > 0) {
         activeText.wordCount = countWordsInTextData(activeText.data);
       }
@@ -1380,7 +1265,6 @@
 
           const chunkWrap = document.createElement('div');
           chunkWrap.className = "chunk-box chunk-touch cursor-pointer";
-          
           chunkWrap.onclick = () => {
             if (config.transMode === 'tap') {
               tappedChunks[chunkKey] = !tappedChunks[chunkKey];
@@ -1396,7 +1280,6 @@
             if (words.length > 0) {
               const firstWord = words[0];
               const restWords = words.slice(1).join(' ');
-
               const redWordSpan = document.createElement('span');
               redWordSpan.className = "font-semibold bg-slate-100 px-1 rounded";
               redWordSpan.style.color = "var(--important-color)";
@@ -1438,7 +1321,6 @@
       });
     }
 
-    // ------------------- 【読解上下タイマー】 ロジック -------------------
     function syncReaderWordCountInput() {
       const activeText = texts.find(t => t.id === currentTextId);
       const val = activeText ? (activeText.wordCount || 0) : 0;
@@ -1615,7 +1497,6 @@
       renderReaderHistoryList();
     }
 
-    // ------------------- 【単独音読タイマー】 (参考書ツリー対応) -------------------
     function selectStandaloneFreeMode() {
       standaloneSelectedTextId = 'free';
       document.getElementById('standalone-active-title').textContent = "💡 自由音読モード (市販教材・外部テキスト)";
@@ -1658,7 +1539,6 @@
       if (folderId) expandedFolderIds.add(folderId);
 
       saveToLocalStorage();
-
       document.getElementById('modal-simple-textbook').classList.add('hidden');
 
       if (simpleTextbookSourceTab === 'library') {
@@ -1675,6 +1555,7 @@
       }
     }
 
+    /* 音読タイマータブの教材選択ツリー（削除ゴミ箱ボタン付き） */
     function renderStandaloneTimerTree() {
       const container = document.getElementById('standalone-tree-container');
       container.innerHTML = '';
@@ -1710,18 +1591,14 @@
           const addBtn = folderHeader.querySelector('.btn-add-text-sub');
           if (addBtn) {
             addBtn.onclick = (e) => {
-              e.preventDefault();
-              e.stopPropagation();
+              e.preventDefault(); e.stopPropagation();
               simpleTextbookSourceTab = 'timer';
               openSimpleTextbookModal(f.id);
             };
           }
 
           li.appendChild(folderHeader);
-
-          if (isExpanded) {
-            li.appendChild(buildStandaloneTree(f.id, level + 1));
-          }
+          if (isExpanded) li.appendChild(buildStandaloneTree(f.id, level + 1));
           ul.appendChild(li);
         });
 
@@ -1735,11 +1612,16 @@
           }`;
 
           li.innerHTML = `
-            <div class="flex items-center gap-2 truncate">
-              <i class="fa-regular fa-file-lines ${isActive ? 'theme-brand-text' : 'text-slate-400'} text-xs"></i>
+            <div class="flex items-center gap-2 truncate min-w-0">
+              <i class="fa-regular fa-file-lines ${isActive ? 'theme-brand-text' : 'text-slate-400'} text-xs flex-shrink-0"></i>
               <span class="truncate text-xs font-medium text-slate-800">${escapeHtml(t.title)}</span>
             </div>
-            <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-mono-num">${t.readCount || 0}回</span>
+            <div class="flex items-center gap-1.5 flex-shrink-0">
+              <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-mono-num">${t.readCount || 0}回</span>
+              <button title="削除" class="btn-del-text p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition">
+                <i class="fa-solid fa-trash-can text-xs pointer-events-none"></i>
+              </button>
+            </div>
           `;
 
           li.onclick = (e) => {
@@ -1751,6 +1633,19 @@
             renderStandaloneTimerTree();
             renderStandaloneTimerHistoryList();
           };
+
+          /* 音読タイマータブからの削除ボタンクリック（二重確認モーダル起動） */
+          const delBtn = li.querySelector('.btn-del-text');
+          if (delBtn) {
+            delBtn.onclick = (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              deleteTarget = { type: 'text', id: t.id };
+              document.getElementById('delete-modal-heading').textContent = "教材を削除しますか？";
+              document.getElementById('delete-target-title').textContent = `「${t.title}」`;
+              document.getElementById('modal-delete').classList.remove('hidden');
+            };
+          }
 
           ul.appendChild(li);
         });
@@ -1851,16 +1746,14 @@
       if (standaloneSelectedTextId === 'free') {
         standaloneFreeHistory.unshift(record);
         localStorage.setItem('ondoc_free_history', JSON.stringify(standaloneFreeHistory));
-        // フリーモードでも回数をカウントアップ
         countEl.textContent = readCountVal + 1;
       } else {
         const activeText = texts.find(t => t.id === standaloneSelectedTextId);
         if (activeText) {
-          activeText.readCount = readCountVal; // 累計回数を更新
+          activeText.readCount = readCountVal;
           activeText.wordCount = wordCount;
           activeText.history.unshift(record);
           saveToLocalStorage();
-          // 次の周回数の表示用に+1
           countEl.textContent = activeText.readCount + 1;
         }
       }
@@ -1928,7 +1821,6 @@
       renderStandaloneTimerHistoryList();
     }
 
-    // ------------------- モーダル & 保存処理 -------------------
     function openFolderModal(parentId) {
       targetParentFolderId = parentId;
       document.getElementById('modal-folder-title').textContent = parentId ? "サブフォルダを追加" : "新しいフォルダを作成";
@@ -2013,6 +1905,7 @@
       errorEl.classList.remove('hidden');
     }
 
+    /* 削除確認モーダルの実行（ライブラリ＆音読タイマータブ共通処理） */
     function handleConfirmDelete() {
       if (!deleteTarget) return;
 
