@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ondoc-v6';
+const CACHE_NAME = 'ondoc-v7';
 const ASSETS = [
   './',
   './index.html',
