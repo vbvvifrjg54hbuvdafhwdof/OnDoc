@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" data-theme="indigo">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>ChunkReader + 音読ラボ</title>
+  <title>OnDoc - スラッシュリーディング & 音読管理</title>
 
   <!-- PWA & アプリインストール設定 -->
-  <meta name="theme-color" content="#4f46e5">
+  <meta name="theme-color" content="#4f46e5" id="theme-color-meta">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="ChunkReader">
+  <meta name="apple-mobile-web-app-title" content="OnDoc">
 
   <!-- iOS用 Apple Touch Icon -->
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='28' fill='%234f46e5'/><path d='M25 38 C35 32, 45 37, 50 42 C55 37, 65 32, 75 38 L75 68 C65 62, 55 67, 50 72 C45 67, 35 62, 25 68 Z' fill='none' stroke='white' stroke-width='6' stroke-linejoin='round'/><line x1='50' y1='42' x2='50' y2='72' stroke='white' stroke-width='6'/></svg>">
@@ -29,21 +29,85 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   
   <style>
+    /* テーマカラー用 CSS 変数定義 */
+    html[data-theme="indigo"] {
+      --brand-primary: #4f46e5;
+      --brand-primary-hover: #4338ca;
+      --brand-light: #eeeffe;
+      --brand-text: #4f46e5;
+      --bg-body: #f8fafc;
+      --bg-card: #ffffff;
+      --border-card: #e2e8f0;
+      --text-main: #1e293b;
+    }
+
+    html[data-theme="mint"] {
+      --brand-primary: #0d9488;
+      --brand-primary-hover: #0f766e;
+      --brand-light: #ccfbf1;
+      --brand-text: #0d9488;
+      --bg-body: #f0fdf4;
+      --bg-card: #ffffff;
+      --border-card: #d1fae5;
+      --text-main: #064e3b;
+    }
+
+    html[data-theme="rose"] {
+      --brand-primary: #e11d48;
+      --brand-primary-hover: #be123c;
+      --brand-light: #ffe4e6;
+      --brand-text: #e11d48;
+      --bg-body: #fff1f2;
+      --bg-card: #ffffff;
+      --border-card: #fecdd3;
+      --text-main: #881337;
+    }
+
+    html[data-theme="amber"] {
+      --brand-primary: #d97706;
+      --brand-primary-hover: #b45309;
+      --brand-light: #fef3c7;
+      --brand-text: #d97706;
+      --bg-body: #fffbeb;
+      --bg-card: #ffffff;
+      --border-card: #fde68a;
+      --text-main: #78350f;
+    }
+
+    html[data-theme="dark"] {
+      --brand-primary: #6366f1;
+      --brand-primary-hover: #818cf8;
+      --brand-light: #1e1b4b;
+      --brand-text: #a5b4fc;
+      --bg-body: #0f172a;
+      --bg-card: #1e293b;
+      --border-card: #334155;
+      --text-main: #f8fafc;
+    }
+
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       -webkit-tap-highlight-color: transparent;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      transition: background-color 0.2s ease, color 0.2s ease;
     }
-    .font-mono-num {
-      font-family: 'JetBrains Mono', monospace;
+
+    .theme-card {
+      background-color: var(--bg-card);
+      border-color: var(--border-card);
     }
+
+    .theme-brand-bg { background-color: var(--brand-primary) !important; }
+    .theme-brand-text { color: var(--brand-text) !important; }
+    .theme-brand-light { background-color: var(--brand-light) !important; }
+
+    .font-mono-num { font-family: 'JetBrains Mono', monospace; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     
-    .chunk-touch {
-      transition: background-color 0.1s ease;
-    }
     .chunk-touch:active {
-      background-color: #e0e7ff !important;
+      background-color: var(--brand-light) !important;
     }
 
     /* 英文と和訳の密着レイアウト */
@@ -88,8 +152,8 @@
       margin-top: 1px !important;
       font-size: 0.62rem !important;
       line-height: 1.15 !important;
-      color: #4f46e5 !important;
-      font-weight: 500 !important;
+      color: var(--brand-primary) !important;
+      font-weight: 600 !important;
       white-space: normal !important;
       word-break: break-all !important;
       overflow-wrap: break-word !important;
@@ -107,38 +171,45 @@
     }
   </style>
 </head>
-<body class="bg-[#f8fafc] text-slate-800 min-h-screen flex flex-col pb-24 md:pb-6 selection:bg-indigo-100">
+<body class="min-h-screen flex flex-col pb-24 md:pb-6 selection:bg-indigo-100">
 
   <!-- ヘッダー -->
-  <header class="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 shadow-sm">
+  <header class="theme-card border-b sticky top-0 z-30 shadow-sm backdrop-blur-md bg-opacity-95">
     <div class="max-w-4xl mx-auto px-3 py-2 flex flex-col gap-2">
       
-      <!-- ブランドタイトル & ステータス -->
+      <!-- タイトル & 設定歯車 -->
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-indigo-100">
+          <div class="w-8 h-8 theme-brand-bg rounded-xl flex items-center justify-center text-white shadow-md shadow-indigo-100">
             <i class="fa-solid fa-book-open text-xs"></i>
           </div>
-          <h1 class="text-base font-bold tracking-tight text-slate-800">ChunkReader <span class="text-xs font-normal text-indigo-600">+音読</span></h1>
-          <button id="btn-pwa-install" class="hidden px-2 py-0.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold rounded-lg shadow-sm transition flex items-center gap-1 active:scale-95">
+          <h1 class="text-lg font-black tracking-tight">OnDoc</h1>
+          <button id="btn-pwa-install" class="hidden px-2 py-0.5 theme-brand-bg hover:opacity-90 text-white text-[10px] font-bold rounded-lg shadow-sm transition flex items-center gap-1 active:scale-95">
             <i class="fa-solid fa-download"></i> アプリ化
           </button>
         </div>
-        <span id="header-folder-tag" class="text-[10px] bg-indigo-50 text-indigo-600 px-2.5 py-0.5 rounded-full font-semibold truncate max-w-[160px]"></span>
+
+        <div class="flex items-center gap-2">
+          <span id="header-folder-tag" class="text-[10px] theme-brand-light theme-brand-text px-2.5 py-0.5 rounded-full font-semibold truncate max-w-[140px]"></span>
+          <!-- テーマ変更 歯車ボタン -->
+          <button id="btn-open-settings" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition" title="テーマ設定">
+            <i class="fa-solid fa-gear text-sm"></i>
+          </button>
+        </div>
       </div>
 
-      <!-- 読解用コントロールバー (読解タブのみ表示) -->
+      <!-- 読解用コントロールバー -->
       <div id="toolbar-controls" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-        <button id="toggle-slash" class="flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 bg-white border border-slate-200 shadow-sm">
-          <span class="font-bold text-indigo-500">/</span> スラッシュ
+        <button id="toggle-slash" class="flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 theme-card border shadow-sm">
+          <span class="font-bold theme-brand-text">/</span> スラッシュ
         </button>
 
-        <button id="toggle-highlight" class="flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 bg-white border border-slate-200 shadow-sm">
+        <button id="toggle-highlight" class="flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 theme-card border shadow-sm">
           <span class="w-2 h-2 rounded-full bg-rose-500"></span> 重要語
         </button>
 
-        <div class="flex-shrink-0 flex bg-slate-100 p-0.5 rounded-lg text-xs font-semibold border border-slate-200/60">
-          <button id="mode-tap" class="px-2 py-0.5 rounded-md transition bg-white text-indigo-600 shadow-sm">タップ</button>
+        <div class="flex-shrink-0 flex bg-slate-100/80 p-0.5 rounded-lg text-xs font-semibold border border-slate-200/60">
+          <button id="mode-tap" class="px-2 py-0.5 rounded-md transition theme-card theme-brand-text shadow-sm">タップ</button>
           <button id="mode-all" class="px-2 py-0.5 rounded-md transition text-slate-500">全表示</button>
           <button id="mode-none" class="px-2 py-0.5 rounded-md transition text-slate-500">隠す</button>
         </div>
@@ -151,20 +222,66 @@
     </div>
   </header>
 
-  <!-- メインコンテンツ領域 -->
+  <!-- メイン領域 -->
   <main class="flex-1 max-w-4xl w-full mx-auto p-3 md:p-6">
 
-    <!-- VIEW 1: 読解画面 -->
-    <section id="view-reader" class="bg-white rounded-2xl p-4 md:p-8 shadow-sm border border-slate-200/60 min-h-[70vh] flex flex-col justify-between">
+    <!-- VIEW 1: 読解画面（音読タイマー統合型） -->
+    <section id="view-reader" class="theme-card rounded-2xl p-4 md:p-7 shadow-sm border min-h-[75vh] flex flex-col justify-between space-y-4">
       <div>
-        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-5 gap-2">
-          <h2 id="current-title" class="text-lg md:text-xl font-bold text-slate-800 tracking-tight leading-snug"></h2>
-          <div class="flex items-center gap-1 flex-shrink-0">
-            <button id="btn-quick-timer" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg text-xs font-semibold transition flex items-center gap-1">
-              <i class="fa-solid fa-stopwatch text-indigo-500"></i> 音読へ
-            </button>
-            <button id="btn-open-delete" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition" title="削除">
-              <i class="fa-solid fa-trash-can text-xs"></i>
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4 gap-2">
+          <h2 id="current-title" class="text-base md:text-xl font-bold tracking-tight leading-snug"></h2>
+          <button id="btn-open-delete" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition" title="削除">
+            <i class="fa-solid fa-trash-can text-xs"></i>
+          </button>
+        </div>
+
+        <!-- 【読解タブ内】統合音読タイマーバー -->
+        <div id="reader-timer-panel" class="mb-5 theme-brand-light rounded-2xl p-3 md:p-4 border border-indigo-100/60 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-3">
+              <!-- ストップウォッチ -->
+              <div id="reader-timer-display" class="text-3xl md:text-4xl font-black font-mono-num theme-brand-text tracking-tight">00:00.0</div>
+              <div class="text-xs font-mono-num text-slate-600">
+                WPM: <span id="reader-wpm-live" class="font-bold theme-brand-text text-sm">—</span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-1.5">
+              <!-- 回数調整 -->
+              <div class="flex items-center gap-1 bg-white/80 px-2 py-1 rounded-xl border border-slate-200/60 text-xs font-bold">
+                <span id="reader-read-count" class="theme-brand-text font-mono-num text-sm">1</span>回目
+                <button id="reader-count-minus" class="w-5 h-5 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs">-</button>
+                <button id="reader-count-plus" class="w-5 h-5 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs">+</button>
+              </div>
+
+              <!-- タイマーボタン -->
+              <button id="btn-reader-start" class="px-3 py-1.5 theme-brand-bg text-white font-bold text-xs rounded-xl shadow-sm active:scale-95 transition flex items-center gap-1">
+                <i class="fa-solid fa-play text-[10px]"></i> 開始
+              </button>
+              <button id="btn-reader-stop" disabled class="px-3 py-1.5 bg-rose-500 text-white font-bold text-xs rounded-xl shadow-sm opacity-50 cursor-not-allowed transition flex items-center gap-1">
+                <i class="fa-solid fa-stop text-[10px]"></i> 停止
+              </button>
+              <button id="btn-reader-reset" class="px-2.5 py-1.5 bg-white text-slate-600 font-semibold text-xs rounded-xl border border-slate-200 transition">
+                リセット
+              </button>
+            </div>
+          </div>
+
+          <!-- 記録のクイック保存アコーディオン -->
+          <div class="flex items-center justify-between gap-2 pt-2 border-t border-indigo-100/80">
+            <div class="flex items-center gap-2 flex-1">
+              <input type="text" id="reader-memo-input" placeholder="音読メモ・気付き..." class="w-full px-2.5 py-1 bg-white border border-slate-200/80 rounded-lg text-xs font-medium focus:outline-none focus:ring-1 focus:ring-indigo-500">
+              <!-- 星評価 -->
+              <div id="reader-star-rating" class="flex gap-0.5 text-slate-300 text-sm cursor-pointer flex-shrink-0">
+                <i data-star="1" class="fa-solid fa-star"></i>
+                <i data-star="2" class="fa-solid fa-star"></i>
+                <i data-star="3" class="fa-solid fa-star"></i>
+                <i data-star="4" class="fa-solid fa-star"></i>
+                <i data-star="5" class="fa-solid fa-star"></i>
+              </div>
+            </div>
+            <button id="btn-reader-save-record" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow-sm active:scale-95 transition flex-shrink-0">
+              記録保存
             </button>
           </div>
         </div>
@@ -179,133 +296,21 @@
       </div>
     </section>
 
-    <!-- VIEW 2: 音読タイマー画面 -->
-    <section id="view-timer" class="hidden space-y-4">
-      <div id="timer-no-text-state" class="bg-white rounded-2xl p-8 text-center text-slate-400 border border-slate-200/60 hidden">
-        <i class="fa-solid fa-stopwatch text-4xl mb-2 text-slate-300"></i>
-        <p class="text-xs text-slate-500 font-medium">文章が選択されていません。ライブラリから選択してください。</p>
-      </div>
-
-      <div id="timer-active-container" class="space-y-4">
-        
-        <!-- タイマーメインカード -->
-        <div class="bg-white rounded-2xl p-5 md:p-7 shadow-sm border border-slate-200/60 relative overflow-hidden">
-          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3 mb-4">
-            <div>
-              <span id="timer-folder-crumb" class="text-[10px] text-slate-400 font-semibold block"></span>
-              <h2 id="timer-text-title" class="text-base md:text-lg font-bold text-slate-800"></h2>
-            </div>
-            <!-- 単語数設定 -->
-            <div class="flex items-center gap-1.5 bg-slate-50 px-3 py-1 rounded-xl border border-slate-200/80 text-xs font-semibold text-slate-600">
-              <span>語数</span>
-              <input type="number" id="input-word-count" min="0" class="w-16 bg-white border border-slate-200 rounded px-1.5 py-0.5 text-center font-mono-num text-indigo-600 font-bold outline-none focus:ring-2 focus:ring-indigo-500/20">
-              <span>words</span>
-            </div>
-          </div>
-
-          <div class="grid md:grid-cols-2 gap-6 items-center my-2">
-            <!-- 回数カウント領域 -->
-            <div class="flex flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-slate-100 pb-4 md:pb-0">
-              <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">現在の音読回数</span>
-              <div class="flex items-baseline gap-1">
-                <span id="timer-read-count" class="text-4xl md:text-5xl font-extrabold text-indigo-600 font-mono-num">1</span>
-                <span class="text-xs font-bold text-slate-400">回目</span>
-              </div>
-              <div class="flex gap-1.5 mt-3">
-                <button id="btn-count-minus" class="w-8 h-8 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 flex items-center justify-center text-sm font-bold active:scale-95 transition">-</button>
-                <button id="btn-count-plus" class="w-8 h-8 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 flex items-center justify-center text-sm font-bold active:scale-95 transition">+</button>
-              </div>
-              <div id="wakelock-status" class="mt-3 text-[10px] text-slate-400 flex items-center gap-1.5">
-                <span id="wakelock-dot" class="w-2 h-2 rounded-full bg-slate-300"></span>
-                <span id="wakelock-text">画面常時点灯: 待機中</span>
-              </div>
-            </div>
-
-            <!-- ストップウォッチ表示領域 -->
-            <div class="flex flex-col items-center md:items-end">
-              <div id="timer-display" class="text-5xl md:text-6xl font-black font-mono-num text-slate-800 tracking-tight">00:00.0</div>
-              <div class="text-xs text-slate-500 font-mono-num mt-1">WPM: <span id="wpm-live" class="font-bold text-indigo-600 text-sm">—</span></div>
-
-              <!-- タイマーコントロール -->
-              <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-end">
-                <button id="btn-timer-start" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md shadow-indigo-100 active:scale-95 transition flex items-center gap-1.5">
-                  <i class="fa-solid fa-play text-xs"></i> スタート
-                </button>
-                <button id="btn-timer-stop" disabled class="px-4 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs rounded-xl shadow-md shadow-rose-100 opacity-50 cursor-not-allowed active:scale-95 transition flex items-center gap-1.5">
-                  <i class="fa-solid fa-stop text-xs"></i> ストップ
-                </button>
-                <button id="btn-timer-lap" disabled class="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl opacity-50 cursor-not-allowed transition">
-                  ラップ
-                </button>
-                <button id="btn-timer-reset" class="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition">
-                  リセット
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- ラップ表示領域 -->
-          <div id="laps-container" class="hidden mt-4 pt-3 border-t border-slate-100">
-            <span class="text-[11px] font-bold text-slate-400 block mb-2">ラップタイム</span>
-            <div id="laps-list" class="max-h-28 overflow-y-auto space-y-1 font-mono-num text-xs"></div>
-          </div>
-        </div>
-
-        <!-- 記録保存カード -->
-        <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-slate-200/60 space-y-4">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">音読メモ・気付き</label>
-            <textarea id="timer-memo" rows="2" placeholder="発音で詰まった箇所や気付きを入力..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition"></textarea>
-          </div>
-
-          <div class="flex items-center justify-between flex-wrap gap-3">
-            <div>
-              <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">自己評価</span>
-              <div id="star-rating" class="flex gap-1 text-slate-300 text-xl cursor-pointer">
-                <i data-star="1" class="fa-solid fa-star transition hover:scale-110"></i>
-                <i data-star="2" class="fa-solid fa-star transition hover:scale-110"></i>
-                <i data-star="3" class="fa-solid fa-star transition hover:scale-110"></i>
-                <i data-star="4" class="fa-solid fa-star transition hover:scale-110"></i>
-                <i data-star="5" class="fa-solid fa-star transition hover:scale-110"></i>
-              </div>
-            </div>
-
-            <button id="btn-save-record" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md shadow-emerald-100 active:scale-95 transition flex items-center gap-1.5">
-              <i class="fa-solid fa-floppy-disk"></i> 記録を保存
-            </button>
-          </div>
-        </div>
-
-        <!-- 音読履歴カード -->
-        <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-slate-200/60 space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-            <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-              <i class="fa-solid fa-clock-rotate-left text-indigo-500"></i> 音読履歴
-            </h3>
-            <span id="history-total-count" class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">0件</span>
-          </div>
-
-          <div id="history-list" class="space-y-2"></div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- VIEW 3: ライブラリ画面 -->
-    <section id="view-library" class="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-slate-200/60 hidden space-y-5">
+    <!-- VIEW 2: ライブラリ画面（位置を移動） -->
+    <section id="view-library" class="theme-card rounded-2xl p-4 md:p-6 shadow-sm border hidden space-y-5">
       <div class="flex flex-wrap items-center justify-between border-b border-slate-100 pb-3 gap-2">
-        <h2 class="text-base font-bold text-slate-800">ライブラリ</h2>
+        <h2 class="text-base font-bold">ライブラリ</h2>
         
         <div class="flex items-center gap-1.5">
           <button id="btn-export-data" class="py-1 px-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition flex items-center gap-1">
-            <i class="fa-solid fa-download text-indigo-500"></i> バックアップ
+            <i class="fa-solid fa-download theme-brand-text"></i> バックアップ
           </button>
           <button id="btn-import-data" class="py-1 px-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition flex items-center gap-1">
             <i class="fa-solid fa-upload text-emerald-500"></i> 復元
           </button>
           <input type="file" id="file-input-backup" accept=".json" class="hidden">
 
-          <button id="btn-add-root-folder" class="py-1 px-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-semibold text-xs rounded-lg transition flex items-center gap-1">
+          <button id="btn-add-root-folder" class="py-1 px-2.5 theme-brand-light theme-brand-text font-semibold text-xs rounded-lg transition flex items-center gap-1">
             <i class="fa-solid fa-folder-plus"></i> 新規フォルダ
           </button>
         </div>
@@ -314,33 +319,110 @@
       <div id="tree-container" class="space-y-1 text-sm"></div>
     </section>
 
+    <!-- VIEW 3: 音読タイマー画面（単独・外部教材対応） -->
+    <section id="view-timer" class="hidden space-y-4">
+      <div class="theme-card rounded-2xl p-4 md:p-6 shadow-sm border space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div class="flex-1 min-w-[200px]">
+            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-0.5">音読する教材を選択</label>
+            <select id="standalone-text-select" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+              <!-- JSで動的に追加 -->
+            </select>
+          </div>
+          <div class="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600">
+            <span>語数</span>
+            <input type="number" id="standalone-word-count" min="0" value="100" class="w-16 bg-white border border-slate-200 rounded px-1.5 py-0.5 text-center font-mono-num theme-brand-text font-bold outline-none">
+            <span>words</span>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 items-center my-2">
+          <!-- 周回数 -->
+          <div class="flex flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-slate-100 pb-4 md:pb-0">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">現在の音読回数</span>
+            <div class="flex items-baseline gap-1">
+              <span id="standalone-read-count" class="text-4xl md:text-5xl font-extrabold theme-brand-text font-mono-num">1</span>
+              <span class="text-xs font-bold text-slate-400">回目</span>
+            </div>
+            <div class="flex gap-1.5 mt-3">
+              <button id="btn-standalone-count-minus" class="w-8 h-8 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 flex items-center justify-center text-sm font-bold active:scale-95 transition">-</button>
+              <button id="btn-standalone-count-plus" class="w-8 h-8 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 flex items-center justify-center text-sm font-bold active:scale-95 transition">+</button>
+            </div>
+          </div>
+
+          <!-- タイマー -->
+          <div class="flex flex-col items-center md:items-end">
+            <div id="standalone-timer-display" class="text-5xl md:text-6xl font-black font-mono-num tracking-tight">00:00.0</div>
+            <div class="text-xs text-slate-500 font-mono-num mt-1">WPM: <span id="standalone-wpm-live" class="font-bold theme-brand-text text-sm">—</span></div>
+
+            <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-end">
+              <button id="btn-standalone-start" class="px-4 py-2 theme-brand-bg text-white font-bold text-xs rounded-xl shadow-md active:scale-95 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-play text-xs"></i> スタート
+              </button>
+              <button id="btn-standalone-stop" disabled class="px-4 py-2 bg-rose-500 text-white font-bold text-xs rounded-xl shadow-md opacity-50 cursor-not-allowed transition flex items-center gap-1.5">
+                <i class="fa-solid fa-stop text-xs"></i> ストップ
+              </button>
+              <button id="btn-standalone-reset" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition">
+                リセット
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 記録メモ -->
+        <div class="border-t border-slate-100 pt-3 space-y-3">
+          <textarea id="standalone-memo" rows="2" placeholder="音読メモ・気付き..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-1 focus:ring-indigo-500"></textarea>
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div id="standalone-star-rating" class="flex gap-1 text-slate-300 text-lg cursor-pointer">
+              <i data-star="1" class="fa-solid fa-star"></i>
+              <i data-star="2" class="fa-solid fa-star"></i>
+              <i data-star="3" class="fa-solid fa-star"></i>
+              <i data-star="4" class="fa-solid fa-star"></i>
+              <i data-star="5" class="fa-solid fa-star"></i>
+            </div>
+            <button id="btn-standalone-save-record" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition">
+              記録を保存
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 履歴カード -->
+      <div class="theme-card rounded-2xl p-4 md:p-6 shadow-sm border space-y-3">
+        <h3 class="text-sm font-bold flex items-center gap-1.5">
+          <i class="fa-solid fa-clock-rotate-left theme-brand-text"></i> 音読履歴ログ
+        </h3>
+        <div id="standalone-history-list" class="space-y-2"></div>
+      </div>
+    </section>
+
     <!-- VIEW 4: JSON追加画面 -->
-    <section id="view-import" class="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-slate-200/60 hidden space-y-5">
+    <section id="view-import" class="theme-card rounded-2xl p-4 md:p-6 shadow-sm border hidden space-y-5">
       <div class="border-b border-slate-100 pb-3">
-        <h2 class="text-base font-bold text-slate-800">新しい英文（JSON）を登録</h2>
+        <h2 class="text-base font-bold">新しい英文（JSON）を登録</h2>
         <p class="text-[11px] text-slate-500 mt-0.5">ChatGPTやClaude等のLLMが出力したJSONコードを貼り付けてください。</p>
       </div>
 
       <div class="space-y-3">
         <div>
           <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">保存先フォルダ</label>
-          <select id="import-folder-select" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition">
+          <select id="import-folder-select" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition">
           </select>
         </div>
 
         <div>
           <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">タイトル（任意）</label>
-          <input type="text" id="import-title" placeholder="例: 今日のニュース解説" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base md:text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition">
+          <input type="text" id="import-title" placeholder="例: 今日のニュース解説" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base md:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition">
         </div>
 
         <div>
           <div class="flex items-center justify-between mb-1">
             <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">JSONコード</label>
-            <button id="btn-paste-clipboard" type="button" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 px-2 py-1 bg-indigo-50 rounded-lg active:bg-indigo-100 transition">
+            <button id="btn-paste-clipboard" type="button" class="text-xs font-semibold theme-brand-text flex items-center gap-1 px-2 py-1 theme-brand-light rounded-lg active:opacity-80 transition">
               <i class="fa-solid fa-paste"></i> 貼り付け
             </button>
           </div>
-          <textarea id="import-json" rows="8" placeholder='[&#10;  {&#10;    "sentence_id": 1,&#10;    "chunks": [ ... ]&#10;  }&#10;]' class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition"></textarea>
+          <textarea id="import-json" rows="8" placeholder='[&#10;  {&#10;    "sentence_id": 1,&#10;    "chunks": [ ... ]&#10;  }&#10;]' class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"></textarea>
         </div>
 
         <div id="import-error" class="hidden p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-600 font-medium"></div>
@@ -348,51 +430,83 @@
 
       <div class="flex justify-end gap-2 pt-1">
         <button id="btn-cancel-import" type="button" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold">キャンセル</button>
-        <button id="btn-save-import" type="button" class="px-5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold shadow-md shadow-indigo-100">登録して読む</button>
+        <button id="btn-save-import" type="button" class="px-5 py-2 rounded-xl theme-brand-bg text-white text-xs font-semibold shadow-md">登録して読む</button>
       </div>
     </section>
 
   </main>
 
-  <!-- 下部固定ナビゲーションバー -->
-  <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 z-40 px-4 py-2 flex justify-around items-center">
-    <button id="nav-reader" class="flex flex-col items-center gap-0.5 text-indigo-600 font-bold transition">
-      <i class="fa-solid fa-book-reader text-lg"></i>
-      <span class="text-[10px]">読解</span>
+  <!-- 下部固定ナビゲーションバー（当たり判定を大きく拡大） -->
+  <nav class="fixed bottom-0 inset-x-0 theme-card border-t z-40 px-2 py-0 flex justify-around items-stretch h-16 shadow-lg backdrop-blur-md bg-opacity-95">
+    <button id="nav-reader" class="flex-1 flex flex-col items-center justify-center gap-1 theme-brand-text font-bold transition py-1 active:scale-95">
+      <i class="fa-solid fa-book-reader text-xl"></i>
+      <span class="text-[11px]">読解</span>
     </button>
-    <button id="nav-timer" class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-700 transition font-normal">
-      <i class="fa-solid fa-stopwatch text-lg"></i>
-      <span class="text-[10px]">音読タイマー</span>
+    <button id="nav-library" class="flex-1 flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-700 transition font-medium py-1 active:scale-95">
+      <i class="fa-solid fa-folder-tree text-xl"></i>
+      <span class="text-[11px]">ライブラリ</span>
     </button>
-    <button id="nav-library" class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-700 transition font-normal">
-      <i class="fa-solid fa-folder-tree text-lg"></i>
-      <span class="text-[10px]">ライブラリ</span>
+    <button id="nav-timer" class="flex-1 flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-700 transition font-medium py-1 active:scale-95">
+      <i class="fa-solid fa-stopwatch text-xl"></i>
+      <span class="text-[11px]">音読タイマー</span>
     </button>
-    <button id="nav-import" class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-700 transition font-normal">
-      <i class="fa-solid fa-square-plus text-lg"></i>
-      <span class="text-[10px]">JSON追加</span>
+    <button id="nav-import" class="flex-1 flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-700 transition font-medium py-1 active:scale-95">
+      <i class="fa-solid fa-square-plus text-xl"></i>
+      <span class="text-[11px]">JSON追加</span>
     </button>
   </nav>
 
-  <!-- モーダル類 -->
-  <div id="modal-folder" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-slate-100 space-y-3">
-      <h3 id="modal-folder-title" class="text-sm font-bold text-slate-800">新しいフォルダを作成</h3>
-      <input type="text" id="folder-name-input" placeholder="フォルダ名を入力" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-base md:text-xs font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition">
-      <div class="flex justify-end gap-2 pt-1">
-        <button id="btn-cancel-folder" class="px-3 py-1.5 rounded-lg text-slate-600 text-xs font-semibold">キャンセル</button>
-        <button id="btn-save-folder" class="px-4 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-semibold">作成</button>
+  <!-- 設定モーダル（テーマカラー変更） -->
+  <div id="modal-settings" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="theme-card rounded-2xl max-w-xs w-full p-5 shadow-2xl border space-y-4">
+      <div class="flex items-center justify-between border-b pb-2">
+        <h3 class="text-sm font-bold">テーマ設定</h3>
+        <button id="btn-close-settings" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="space-y-2">
+        <label class="block text-xs font-bold text-slate-500">カラーテーマを選択</label>
+        <div class="grid grid-cols-1 gap-2">
+          <button data-set-theme="indigo" class="px-3 py-2 rounded-xl border flex items-center justify-between font-semibold text-xs active:scale-95 transition">
+            <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-indigo-600 inline-block"></span> インディゴ (標準)</span>
+          </button>
+          <button data-set-theme="mint" class="px-3 py-2 rounded-xl border flex items-center justify-between font-semibold text-xs active:scale-95 transition">
+            <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-teal-600 inline-block"></span> パステルミント</span>
+          </button>
+          <button data-set-theme="rose" class="px-3 py-2 rounded-xl border flex items-center justify-between font-semibold text-xs active:scale-95 transition">
+            <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-rose-500 inline-block"></span> パステルサクラ</span>
+          </button>
+          <button data-set-theme="amber" class="px-3 py-2 rounded-xl border flex items-center justify-between font-semibold text-xs active:scale-95 transition">
+            <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-amber-500 inline-block"></span> パステルハニー</span>
+          </button>
+          <button data-set-theme="dark" class="px-3 py-2 rounded-xl border flex items-center justify-between font-semibold text-xs active:scale-95 transition bg-slate-800 text-white">
+            <span class="flex items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-indigo-400 inline-block"></span> ダークモード</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- フォルダ作成モーダル -->
+  <div id="modal-folder" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="theme-card rounded-2xl max-w-xs w-full p-5 shadow-2xl border space-y-3">
+      <h3 id="modal-folder-title" class="text-sm font-bold">新しいフォルダを作成</h3>
+      <input type="text" id="folder-name-input" placeholder="フォルダ名を入力" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-base md:text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition">
+      <div class="flex justify-end gap-2 pt-1">
+        <button id="btn-cancel-folder" class="px-3 py-1.5 rounded-lg text-slate-600 text-xs font-semibold">キャンセル</button>
+        <button id="btn-save-folder" class="px-4 py-1.5 rounded-lg theme-brand-bg text-white text-xs font-semibold">作成</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 削除確認モーダル (OnDoc統一デザイン) -->
   <div id="modal-delete" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-slate-100 space-y-4 text-center">
+    <div class="theme-card rounded-2xl max-w-xs w-full p-5 shadow-2xl border space-y-4 text-center">
       <div class="w-10 h-10 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center mx-auto text-lg">
         <i class="fa-solid fa-triangle-exclamation"></i>
       </div>
       <div class="space-y-1">
-        <h3 id="delete-modal-heading" class="text-base font-bold text-slate-800">削除しますか？</h3>
+        <h3 id="delete-modal-heading" class="text-base font-bold">削除しますか？</h3>
         <p id="delete-target-title" class="text-xs text-slate-500 font-medium break-words"></p>
       </div>
       <div class="flex justify-center gap-2 pt-1">
@@ -497,7 +611,8 @@
     let deleteTarget = null;
     let expandedFolderIds = new Set();
     let isTreeInit = false;
-    let lastSelectedFolderId = localStorage.getItem('chunk_reader_last_folder_v6') || "";
+    let lastSelectedFolderId = localStorage.getItem('ondoc_last_folder_v1') || "";
+    let currentTheme = localStorage.getItem('ondoc_theme_v1') || "indigo";
 
     // 読解表示設定
     let config = {
@@ -508,16 +623,23 @@
     };
     let tappedChunks = {};
 
-    // 音読タイマー状態
-    let timerRunning = false;
-    let timerStart = 0;
-    let elapsedBase = 0;
-    let timerInterval = null;
-    let laps = [];
-    let wakeLock = null;
-    let selectedRating = 0;
+    // 読解タブ内タイマー状態
+    let readerTimerRunning = false;
+    let readerTimerStart = 0;
+    let readerElapsedBase = 0;
+    let readerTimerInterval = null;
+    let readerSelectedRating = 0;
+
+    // 単独タイマー状態
+    let standaloneTimerRunning = false;
+    let standaloneTimerStart = 0;
+    let standaloneElapsedBase = 0;
+    let standaloneTimerInterval = null;
+    let standaloneSelectedRating = 0;
+    let standaloneFreeHistory = JSON.parse(localStorage.getItem('ondoc_free_history') || '[]');
 
     document.addEventListener('DOMContentLoaded', () => {
+      applyTheme(currentTheme);
       loadDataFromStorage();
       setupEventListeners();
       updateToggleStyles();
@@ -525,10 +647,25 @@
       switchView('reader');
     });
 
+    function applyTheme(themeName) {
+      currentTheme = themeName;
+      document.documentElement.setAttribute('data-theme', themeName);
+      localStorage.setItem('ondoc_theme_v1', themeName);
+
+      const themeColors = {
+        indigo: '#4f46e5',
+        mint: '#0d9488',
+        rose: '#e11d48',
+        amber: '#d97706',
+        dark: '#0f172a'
+      };
+      document.getElementById('theme-color-meta').setAttribute('content', themeColors[themeName] || '#4f46e5');
+    }
+
     function loadDataFromStorage() {
       try {
-        const storedFolders = localStorage.getItem('chunk_reader_folders_v6');
-        const storedTexts = localStorage.getItem('chunk_reader_texts_v6');
+        const storedFolders = localStorage.getItem('ondoc_folders_v1');
+        const storedTexts = localStorage.getItem('ondoc_texts_v1');
         if (storedFolders && storedTexts) {
           folders = JSON.parse(storedFolders);
           texts = JSON.parse(storedTexts);
@@ -543,7 +680,6 @@
         saveToLocalStorage();
       }
 
-      // 単語数の未設定データを補正
       texts.forEach(t => {
         if (!t.wordCount) t.wordCount = countWordsInTextData(t.data);
         if (t.readCount === undefined) t.readCount = 0;
@@ -554,8 +690,8 @@
     }
 
     function saveToLocalStorage() {
-      localStorage.setItem('chunk_reader_folders_v6', JSON.stringify(folders));
-      localStorage.setItem('chunk_reader_texts_v6', JSON.stringify(texts));
+      localStorage.setItem('ondoc_folders_v1', JSON.stringify(folders));
+      localStorage.setItem('ondoc_texts_v1', JSON.stringify(texts));
     }
 
     function countWordsInTextData(data) {
@@ -576,30 +712,30 @@
 
     function switchView(viewName) {
       document.getElementById('view-reader').classList.toggle('hidden', viewName !== 'reader');
-      document.getElementById('view-timer').classList.toggle('hidden', viewName !== 'timer');
       document.getElementById('view-library').classList.toggle('hidden', viewName !== 'library');
+      document.getElementById('view-timer').classList.toggle('hidden', viewName !== 'timer');
       document.getElementById('view-import').classList.toggle('hidden', viewName !== 'import');
 
       document.getElementById('toolbar-controls').style.display = (viewName === 'reader') ? 'flex' : 'none';
 
       const navs = {
         reader: document.getElementById('nav-reader'),
-        timer: document.getElementById('nav-timer'),
         library: document.getElementById('nav-library'),
+        timer: document.getElementById('nav-timer'),
         import: document.getElementById('nav-import')
       };
 
       Object.keys(navs).forEach(key => {
         if (key === viewName) {
-          navs[key].className = "flex flex-col items-center gap-0.5 text-indigo-600 font-bold transition";
+          navs[key].className = "flex-1 flex flex-col items-center justify-center gap-1 theme-brand-text font-bold transition py-1 active:scale-95";
         } else {
-          navs[key].className = "flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-700 transition font-normal";
+          navs[key].className = "flex-1 flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-700 transition font-medium py-1 active:scale-95";
         }
       });
 
       if (viewName === 'reader') renderReader();
-      if (viewName === 'timer') renderTimerView();
       if (viewName === 'library') renderTree();
+      if (viewName === 'timer') renderStandaloneTimerView();
       if (viewName === 'import') renderFolderSelectOptions();
     }
 
@@ -614,27 +750,37 @@
         }
       };
 
-      // Nav Tab switching
-      document.getElementById('nav-reader').onclick = () => switchView('reader');
-      document.getElementById('nav-timer').onclick = () => switchView('timer');
-      document.getElementById('nav-library').onclick = () => switchView('library');
-      document.getElementById('nav-import').onclick = () => switchView('import');
-      document.getElementById('btn-quick-timer').onclick = () => switchView('timer');
+      // 設定モーダル
+      document.getElementById('btn-open-settings').onclick = () => document.getElementById('modal-settings').classList.remove('hidden');
+      document.getElementById('btn-close-settings').onclick = () => document.getElementById('modal-settings').classList.add('hidden');
+      
+      document.querySelectorAll('[data-set-theme]').forEach(btn => {
+        btn.onclick = () => {
+          applyTheme(btn.dataset.setTheme);
+          document.getElementById('modal-settings').classList.add('hidden');
+        };
+      });
 
-      // Import actions
+      // ナビゲーション切り替え
+      document.getElementById('nav-reader').onclick = () => switchView('reader');
+      document.getElementById('nav-library').onclick = () => switchView('library');
+      document.getElementById('nav-timer').onclick = () => switchView('timer');
+      document.getElementById('nav-import').onclick = () => switchView('import');
+
+      // インポート操作
       document.getElementById('btn-cancel-import').onclick = () => switchView('reader');
       document.getElementById('btn-add-root-folder').onclick = () => openFolderModal(null);
       document.getElementById('btn-cancel-folder').onclick = closeFolderModal;
       document.getElementById('btn-save-folder').onclick = handleSaveFolder;
 
-      // Backup/Restore
+      // バックアップ / 復元
       document.getElementById('btn-export-data').onclick = handleExportData;
       document.getElementById('btn-import-data').onclick = () => document.getElementById('file-input-backup').click();
       document.getElementById('file-input-backup').onchange = handleImportBackupFile;
 
       document.getElementById('import-folder-select').addEventListener('change', (e) => {
         lastSelectedFolderId = e.target.value;
-        localStorage.setItem('chunk_reader_last_folder_v6', lastSelectedFolderId);
+        localStorage.setItem('ondoc_last_folder_v1', lastSelectedFolderId);
       });
 
       document.getElementById('btn-paste-clipboard').onclick = async () => {
@@ -646,7 +792,7 @@
         }
       };
 
-      // Reader Toggles
+      // 読解トグル
       document.getElementById('toggle-slash').onclick = () => { config.showSlash = !config.showSlash; updateToggleStyles(); renderReader(); };
       document.getElementById('toggle-highlight').onclick = () => { config.showHighlight = !config.showHighlight; updateToggleStyles(); renderReader(); };
       document.getElementById('toggle-raw').onclick = () => { config.isRaw = !config.isRaw; updateToggleStyles(); renderReader(); };
@@ -662,7 +808,7 @@
 
       document.getElementById('btn-save-import').onclick = handleSaveImport;
 
-      // Delete Modal
+      // 削除モーダル
       document.getElementById('btn-open-delete').onclick = () => {
         const activeText = texts.find(t => t.id === currentTextId);
         if (!activeText) return;
@@ -675,68 +821,114 @@
       document.getElementById('btn-cancel-delete').onclick = () => document.getElementById('modal-delete').classList.add('hidden');
       document.getElementById('btn-confirm-delete').onclick = handleConfirmDelete;
 
-      // Timer Controls
-      document.getElementById('btn-timer-start').onclick = startTimer;
-      document.getElementById('btn-timer-stop').onclick = stopTimer;
-      document.getElementById('btn-timer-lap').onclick = addLap;
-      document.getElementById('btn-timer-reset').onclick = resetTimer;
+      // --- 【読解タブ内】統合タイマー イベント ---
+      document.getElementById('btn-reader-start').onclick = startReaderTimer;
+      document.getElementById('btn-reader-stop').onclick = stopReaderTimer;
+      document.getElementById('btn-reader-reset').onclick = resetReaderTimer;
+      document.getElementById('btn-reader-save-record').onclick = saveReaderTimerRecord;
 
-      document.getElementById('btn-count-plus').onclick = () => {
+      document.getElementById('reader-count-plus').onclick = () => {
         const activeText = texts.find(t => t.id === currentTextId);
         if (!activeText) return;
         activeText.readCount += 1;
         saveToLocalStorage();
-        updateTimerHeaderDisplay();
+        updateReaderTimerDisplay();
       };
 
-      document.getElementById('btn-count-minus').onclick = () => {
+      document.getElementById('reader-count-minus').onclick = () => {
         const activeText = texts.find(t => t.id === currentTextId);
         if (!activeText) return;
         activeText.readCount = Math.max(0, activeText.readCount - 1);
         saveToLocalStorage();
-        updateTimerHeaderDisplay();
+        updateReaderTimerDisplay();
       };
 
-      document.getElementById('input-word-count').addEventListener('input', (e) => {
-        const activeText = texts.find(t => t.id === currentTextId);
-        if (!activeText) return;
-        const v = parseInt(e.target.value, 10);
-        activeText.wordCount = isNaN(v) ? 0 : v;
-        saveToLocalStorage();
-        updateLiveWpm(currentElapsedMs());
-      });
-
-      // Star rating click handler
-      document.querySelectorAll('#star-rating i').forEach(star => {
+      document.querySelectorAll('#reader-star-rating i').forEach(star => {
         star.onclick = () => {
           const rating = parseInt(star.dataset.star, 10);
-          setStarRating(selectedRating === rating ? 0 : rating);
+          setReaderStarRating(readerSelectedRating === rating ? 0 : rating);
         };
       });
 
-      document.getElementById('btn-save-record').onclick = handleSaveTimerRecord;
+      // --- 【独立音読タイマー】 イベント ---
+      document.getElementById('btn-standalone-start').onclick = startStandaloneTimer;
+      document.getElementById('btn-standalone-stop').onclick = stopStandaloneTimer;
+      document.getElementById('btn-standalone-reset').onclick = resetStandaloneTimer;
+      document.getElementById('btn-standalone-save-record').onclick = saveStandaloneTimerRecord;
+
+      document.getElementById('standalone-text-select').onchange = (e) => {
+        const val = e.target.value;
+        if (val === 'free') {
+          document.getElementById('standalone-word-count').value = 100;
+          document.getElementById('standalone-read-count').textContent = 1;
+        } else {
+          const selected = texts.find(t => t.id === val);
+          if (selected) {
+            document.getElementById('standalone-word-count').value = selected.wordCount || 100;
+            document.getElementById('standalone-read-count').textContent = selected.readCount + 1;
+          }
+        }
+        renderStandaloneTimerHistoryList();
+      };
+
+      document.getElementById('btn-standalone-count-plus').onclick = () => {
+        const selectVal = document.getElementById('standalone-text-select').value;
+        if (selectVal !== 'free') {
+          const activeText = texts.find(t => t.id === selectVal);
+          if (activeText) {
+            activeText.readCount += 1;
+            saveToLocalStorage();
+            document.getElementById('standalone-read-count').textContent = activeText.readCount + 1;
+            return;
+          }
+        }
+        const el = document.getElementById('standalone-read-count');
+        el.textContent = parseInt(el.textContent, 10) + 1;
+      };
+
+      document.getElementById('btn-standalone-count-minus').onclick = () => {
+        const selectVal = document.getElementById('standalone-text-select').value;
+        if (selectVal !== 'free') {
+          const activeText = texts.find(t => t.id === selectVal);
+          if (activeText) {
+            activeText.readCount = Math.max(0, activeText.readCount - 1);
+            saveToLocalStorage();
+            document.getElementById('standalone-read-count').textContent = activeText.readCount + 1;
+            return;
+          }
+        }
+        const el = document.getElementById('standalone-read-count');
+        el.textContent = Math.max(1, parseInt(el.textContent, 10) - 1);
+      };
+
+      document.querySelectorAll('#standalone-star-rating i').forEach(star => {
+        star.onclick = () => {
+          const rating = parseInt(star.dataset.star, 10);
+          setStandaloneStarRating(standaloneSelectedRating === rating ? 0 : rating);
+        };
+      });
     }
 
     function updateToggleStyles() {
       const slashBtn = document.getElementById('toggle-slash');
       slashBtn.className = config.showSlash
-        ? "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 bg-white border border-indigo-200 text-indigo-700 shadow-sm"
+        ? "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 theme-card theme-brand-text border shadow-sm"
         : "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 border border-slate-200 text-slate-400";
 
       const hlBtn = document.getElementById('toggle-highlight');
       hlBtn.className = config.showHighlight
-        ? "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 bg-white border border-rose-200 text-rose-700 shadow-sm"
+        ? "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 theme-card text-rose-600 border shadow-sm"
         : "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 border border-slate-200 text-slate-400";
 
       const rawBtn = document.getElementById('toggle-raw');
       rawBtn.className = config.isRaw
-        ? "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 bg-emerald-500 text-white shadow-sm"
+        ? "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 bg-emerald-600 text-white shadow-sm"
         : "flex-shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 border border-slate-200 text-slate-600";
 
       ['tap', 'all', 'none'].forEach(mode => {
         const btn = document.getElementById(`mode-${mode}`);
         if (config.transMode === mode) {
-          btn.className = "px-2 py-0.5 rounded-md transition bg-white text-indigo-600 font-bold shadow-sm";
+          btn.className = "px-2 py-0.5 rounded-md transition theme-card theme-brand-text font-bold shadow-sm";
         } else {
           btn.className = "px-2 py-0.5 rounded-md transition text-slate-500 font-medium";
         }
@@ -773,7 +965,7 @@
             <div class="flex items-center gap-2 truncate">
               <i class="fa-solid ${isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'} text-slate-400 text-xs w-3"></i>
               <i class="fa-solid ${isExpanded ? 'fa-folder-open text-amber-500' : 'fa-folder text-amber-400'} text-base"></i>
-              <span class="truncate text-sm text-slate-800 font-bold">${escapeHtml(f.name)}</span>
+              <span class="truncate text-sm font-bold">${escapeHtml(f.name)}</span>
               <span class="text-[10px] font-medium text-slate-400 bg-white/80 px-2 py-0.5 rounded-full border border-slate-200/60">${totalItems}件</span>
             </div>
             <div class="flex items-center gap-1">
@@ -810,17 +1002,17 @@
           const li = document.createElement('li');
           const isActive = t.id === currentTextId;
           li.className = `p-2.5 px-3 rounded-xl cursor-pointer transition flex items-center justify-between gap-2.5 ${
-            isActive ? 'bg-indigo-600 text-white font-bold shadow-sm shadow-indigo-200' : 'text-slate-700 hover:bg-slate-100/80 bg-white border border-slate-200/50'
+            isActive ? 'theme-brand-bg text-white font-bold shadow-sm' : 'hover:bg-slate-100/80 bg-white border border-slate-200/50'
           }`;
           
           li.innerHTML = `
             <div class="flex items-center gap-2.5 truncate min-w-0">
-              <i class="fa-regular fa-file-lines ${isActive ? 'text-indigo-200' : 'text-slate-400'} text-xs flex-shrink-0"></i>
+              <i class="fa-regular fa-file-lines ${isActive ? 'text-white/80' : 'text-slate-400'} text-xs flex-shrink-0"></i>
               <span class="truncate text-xs md:text-sm font-medium tracking-tight">${escapeHtml(t.title)}</span>
             </div>
             <div class="flex items-center gap-2 flex-shrink-0">
-              <span class="text-[10px] ${isActive ? 'bg-indigo-700 text-indigo-100' : 'bg-slate-100 text-slate-500'} px-2 py-0.5 rounded-full font-mono-num">${t.readCount || 0}回音読</span>
-              <button title="文章削除" class="btn-del-text p-1.5 ${isActive ? 'text-indigo-200 hover:text-white hover:bg-indigo-500/50' : 'text-slate-400 hover:text-rose-600 hover:bg-slate-100'} rounded-lg transition">
+              <span class="text-[10px] ${isActive ? 'bg-black/20 text-white' : 'bg-slate-100 text-slate-500'} px-2 py-0.5 rounded-full font-mono-num">${t.readCount || 0}回音読</span>
+              <button title="文章削除" class="btn-del-text p-1.5 ${isActive ? 'text-white/80 hover:text-white' : 'text-slate-400 hover:text-rose-600'} rounded-lg transition">
                 <i class="fa-solid fa-trash-can text-xs"></i>
               </button>
             </div>
@@ -830,7 +1022,7 @@
             e.stopPropagation();
             currentTextId = t.id;
             tappedChunks = {};
-            resetTimer();
+            resetReaderTimer();
             renderTree();
             switchView('reader');
           };
@@ -896,36 +1088,36 @@
       const currentTitleEl = document.getElementById('current-title');
       const headerFolderTag = document.getElementById('header-folder-tag');
       const emptyState = document.getElementById('empty-state');
+      const timerPanel = document.getElementById('reader-timer-panel');
 
       if (!activeText) {
         currentTitleEl.textContent = "文章がありません";
         headerFolderTag.textContent = "";
         readerContent.innerHTML = '';
         emptyState.classList.remove('hidden');
+        timerPanel.classList.add('hidden');
         return;
       }
 
       emptyState.classList.add('hidden');
+      timerPanel.classList.remove('hidden');
       currentTitleEl.textContent = activeText.title;
       headerFolderTag.textContent = getFolderPath(activeText.folderId);
       readerContent.innerHTML = '';
 
+      updateReaderTimerDisplay();
+
       if (config.isRaw) {
         const p = document.createElement('p');
-        p.className = "text-slate-800 leading-relaxed font-normal tracking-wide";
-        const fullText = activeText.data
-          .map(s => s.chunks.map(c => c.en).join(' '))
-          .join(' ');
+        p.className = "leading-relaxed font-normal tracking-wide";
+        const fullText = activeText.data.map(s => s.chunks.map(c => c.en).join(' ')).join(' ');
         p.textContent = fullText;
         readerContent.appendChild(p);
         return;
       }
 
-      if (config.transMode === 'none') {
-        readerContent.classList.add('mode-no-trans');
-      } else {
-        readerContent.classList.remove('mode-no-trans');
-      }
+      if (config.transMode === 'none') readerContent.classList.add('mode-no-trans');
+      else readerContent.classList.remove('mode-no-trans');
 
       activeText.data.forEach((sentence, sIdx) => {
         const sentenceDiv = document.createElement('div');
@@ -946,7 +1138,7 @@
           };
 
           const enSpan = document.createElement('span');
-          enSpan.className = "chunk-en select-none tracking-wide text-slate-800";
+          enSpan.className = "chunk-en select-none tracking-wide";
           
           if (config.showHighlight && chunk.is_important) {
             const words = chunk.en.split(' ');
@@ -994,33 +1186,11 @@
       });
     }
 
-    // ------------------- 音読タイマー画面表示 & ロジック -------------------
-    function renderTimerView() {
-      const activeText = texts.find(t => t.id === currentTextId);
-      const noTextState = document.getElementById('timer-no-text-state');
-      const activeContainer = document.getElementById('timer-active-container');
-
-      if (!activeText) {
-        noTextState.classList.remove('hidden');
-        activeContainer.classList.add('hidden');
-        return;
-      }
-
-      noTextState.classList.add('hidden');
-      activeContainer.classList.remove('hidden');
-
-      document.getElementById('timer-folder-crumb').textContent = getFolderPath(activeText.folderId);
-      document.getElementById('timer-text-title').textContent = activeText.title;
-      document.getElementById('input-word-count').value = activeText.wordCount || 0;
-
-      updateTimerHeaderDisplay();
-      renderTimerHistoryList();
-    }
-
-    function updateTimerHeaderDisplay() {
+    // ------------------- 【読解タブ内】統合タイマー ロジック -------------------
+    function updateReaderTimerDisplay() {
       const activeText = texts.find(t => t.id === currentTextId);
       if (!activeText) return;
-      document.getElementById('timer-read-count').textContent = activeText.readCount + 1;
+      document.getElementById('reader-read-count').textContent = activeText.readCount + 1;
     }
 
     function formatTime(ms) {
@@ -1032,169 +1202,76 @@
       return `${pad(m)}:${pad(s)}.${tenths}`;
     }
 
-    function currentElapsedMs() {
-      return timerRunning ? elapsedBase + (Date.now() - timerStart) : elapsedBase;
-    }
-
-    function tickTimer() {
-      const ms = currentElapsedMs();
-      document.getElementById('timer-display').textContent = formatTime(ms);
-      updateLiveWpm(ms);
-    }
-
     function computeWpm(wordCount, ms) {
       if (!wordCount || wordCount <= 0 || ms <= 0) return 0;
       return Math.round(wordCount / (ms / 60000));
     }
 
-    function updateLiveWpm(ms) {
-      const activeText = texts.find(t => t.id === currentTextId);
-      const wpmEl = document.getElementById('wpm-live');
-      if (!activeText || !activeText.wordCount) { wpmEl.textContent = '—'; return; }
-      const wpm = computeWpm(activeText.wordCount, ms);
-      wpmEl.textContent = wpm > 0 ? `${wpm}` : '—';
+    function startReaderTimer() {
+      if (readerTimerRunning) return;
+      readerTimerRunning = true;
+      readerTimerStart = Date.now();
+      readerTimerInterval = setInterval(() => {
+        const ms = readerElapsedBase + (Date.now() - readerTimerStart);
+        document.getElementById('reader-timer-display').textContent = formatTime(ms);
+        const activeText = texts.find(t => t.id === currentTextId);
+        const wpm = computeWpm(activeText ? activeText.wordCount : 0, ms);
+        document.getElementById('reader-wpm-live').textContent = wpm > 0 ? `${wpm}` : '—';
+      }, 100);
+
+      document.getElementById('btn-reader-start').disabled = true;
+      document.getElementById('btn-reader-start').classList.add('opacity-50');
+      document.getElementById('btn-reader-stop').disabled = false;
+      document.getElementById('btn-reader-stop').classList.remove('opacity-50', 'cursor-not-allowed');
     }
 
-    async function requestWakeLock() {
-      try {
-        if ('wakeLock' in navigator) {
-          wakeLock = await navigator.wakeLock.request('screen');
-          setWakeLockUI(true);
-        }
-      } catch (e) {
-        setWakeLockUI(false);
-      }
+    function stopReaderTimer() {
+      if (!readerTimerRunning) return;
+      readerElapsedBase += Date.now() - readerTimerStart;
+      readerTimerRunning = false;
+      clearInterval(readerTimerInterval);
+
+      document.getElementById('btn-reader-start').disabled = false;
+      document.getElementById('btn-reader-start').classList.remove('opacity-50');
+      document.getElementById('btn-reader-stop').disabled = true;
+      document.getElementById('btn-reader-stop').classList.add('opacity-50', 'cursor-not-allowed');
     }
 
-    function releaseWakeLock() {
-      if (wakeLock) {
-        wakeLock.release().catch(() => {});
-        wakeLock = null;
-      }
-      setWakeLockUI(false);
+    function resetReaderTimer() {
+      clearInterval(readerTimerInterval);
+      readerTimerRunning = false;
+      readerElapsedBase = 0;
+      readerTimerStart = 0;
+
+      document.getElementById('reader-timer-display').textContent = '00:00.0';
+      document.getElementById('reader-wpm-live').textContent = '—';
+
+      document.getElementById('btn-reader-start').disabled = false;
+      document.getElementById('btn-reader-start').classList.remove('opacity-50');
+      document.getElementById('btn-reader-stop').disabled = true;
+      document.getElementById('btn-reader-stop').classList.add('opacity-50', 'cursor-not-allowed');
     }
 
-    function setWakeLockUI(active) {
-      const dot = document.getElementById('wakelock-dot');
-      const text = document.getElementById('wakelock-text');
-      if (active) {
-        dot.className = "w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-200";
-        text.textContent = "画面常時点灯: ON";
-        text.className = "text-emerald-600 font-medium";
-      } else {
-        dot.className = "w-2 h-2 rounded-full bg-slate-300";
-        text.textContent = "画面常時点灯: 待機中";
-        text.className = "text-slate-400";
-      }
-    }
-
-    function startTimer() {
-      if (timerRunning) return;
-      timerRunning = true;
-      timerStart = Date.now();
-      timerInterval = setInterval(tickTimer, 100);
-      requestWakeLock();
-
-      document.getElementById('btn-timer-start').disabled = true;
-      document.getElementById('btn-timer-start').classList.add('opacity-50', 'cursor-not-allowed');
-      
-      const stopBtn = document.getElementById('btn-timer-stop');
-      stopBtn.disabled = false;
-      stopBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-
-      const lapBtn = document.getElementById('btn-timer-lap');
-      lapBtn.disabled = false;
-      lapBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-    }
-
-    function stopTimer() {
-      if (!timerRunning) return;
-      elapsedBase += Date.now() - timerStart;
-      timerRunning = false;
-      clearInterval(timerInterval);
-      releaseWakeLock();
-
-      document.getElementById('btn-timer-start').disabled = false;
-      document.getElementById('btn-timer-start').classList.remove('opacity-50', 'cursor-not-allowed');
-
-      const stopBtn = document.getElementById('btn-timer-stop');
-      stopBtn.disabled = true;
-      stopBtn.classList.add('opacity-50', 'cursor-not-allowed');
-
-      const lapBtn = document.getElementById('btn-timer-lap');
-      lapBtn.disabled = true;
-      lapBtn.classList.add('opacity-50', 'cursor-not-allowed');
-
-      tickTimer();
-    }
-
-    function resetTimer() {
-      clearInterval(timerInterval);
-      timerRunning = false;
-      releaseWakeLock();
-      elapsedBase = 0;
-      timerStart = 0;
-      laps = [];
-
-      document.getElementById('timer-display').textContent = '00:00.0';
-      document.getElementById('wpm-live').textContent = '—';
-      document.getElementById('laps-container').classList.add('hidden');
-      document.getElementById('laps-list').innerHTML = '';
-
-      document.getElementById('btn-timer-start').disabled = false;
-      document.getElementById('btn-timer-start').classList.remove('opacity-50', 'cursor-not-allowed');
-
-      const stopBtn = document.getElementById('btn-timer-stop');
-      stopBtn.disabled = true;
-      stopBtn.classList.add('opacity-50', 'cursor-not-allowed');
-
-      const lapBtn = document.getElementById('btn-timer-lap');
-      lapBtn.disabled = true;
-      lapBtn.classList.add('opacity-50', 'cursor-not-allowed');
-    }
-
-    function addLap() {
-      if (!timerRunning) return;
-      laps.unshift({ n: laps.length + 1, ms: currentElapsedMs() });
-      const lapsContainer = document.getElementById('laps-container');
-      const lapsList = document.getElementById('laps-list');
-      lapsContainer.classList.remove('hidden');
-
-      lapsList.innerHTML = laps.map(l => `
-        <div class="flex justify-between py-1 border-b border-slate-100 text-slate-600">
-          <span class="text-slate-400">LAP ${l.n}</span>
-          <span class="font-bold">${formatTime(l.ms)}</span>
-        </div>
-      `).join('');
-    }
-
-    function setStarRating(rating) {
-      selectedRating = rating;
-      document.querySelectorAll('#star-rating i').forEach(star => {
+    function setReaderStarRating(rating) {
+      readerSelectedRating = rating;
+      document.querySelectorAll('#reader-star-rating i').forEach(star => {
         const r = parseInt(star.dataset.star, 10);
-        if (r <= rating) {
-          star.className = "fa-solid fa-star text-amber-400 transition hover:scale-110";
-        } else {
-          star.className = "fa-solid fa-star text-slate-200 transition hover:scale-110";
-        }
+        star.className = r <= rating ? "fa-solid fa-star text-amber-400" : "fa-solid fa-star text-slate-300";
       });
     }
 
-    function handleSaveTimerRecord() {
+    function saveReaderTimerRecord() {
       const activeText = texts.find(t => t.id === currentTextId);
       if (!activeText) return;
 
-      const ms = currentElapsedMs();
-      if (ms <= 0) {
-        alert('タイマーをスタートさせてから保存してください。');
-        return;
-      }
+      const ms = readerTimerRunning ? readerElapsedBase + (Date.now() - readerTimerStart) : readerElapsedBase;
+      if (ms <= 0) return;
 
-      if (timerRunning) stopTimer();
+      if (readerTimerRunning) stopReaderTimer();
 
       activeText.readCount += 1;
       const wpm = computeWpm(activeText.wordCount, ms);
-      const memoText = document.getElementById('timer-memo').value.trim();
+      const memoText = document.getElementById('reader-memo-input').value.trim();
 
       const record = {
         id: "rec-" + Date.now(),
@@ -1203,100 +1280,198 @@
         timeMs: ms,
         wpm: wpm,
         memo: memoText,
-        rating: selectedRating
+        rating: readerSelectedRating
       };
 
       activeText.history.unshift(record);
       saveToLocalStorage();
 
-      document.getElementById('timer-memo').value = '';
-      setStarRating(0);
-      resetTimer();
+      document.getElementById('reader-memo-input').value = '';
+      setReaderStarRating(0);
+      resetReaderTimer();
 
-      updateTimerHeaderDisplay();
-      renderTimerHistoryList();
+      updateReaderTimerDisplay();
       renderTree();
-
-      alert(`音読記録を保存しました！（${record.count}回目）`);
     }
 
-    function getBestRecordIds(history) {
-      if (!history || history.length === 0) return { bestWpmId: null, bestTimeId: null };
-      let bestWpmRec = null;
-      let bestTimeRec = null;
+    // ------------------- 【独立音読タイマー】 表示 & ロジック -------------------
+    function renderStandaloneTimerView() {
+      const selectEl = document.getElementById('standalone-text-select');
+      selectEl.innerHTML = '<option value="free">💡 フリー音読 (アプリ外の市販教材など)</option>';
 
-      history.forEach(r => {
-        if (r.wpm > 0 && (!bestWpmRec || r.wpm > bestWpmRec.wpm)) bestWpmRec = r;
-        if (r.timeMs > 0 && (!bestTimeRec || r.timeMs < bestTimeRec.timeMs)) bestTimeRec = r;
+      texts.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = `📖 ${t.title}`;
+        if (t.id === currentTextId) opt.selected = true;
+        selectEl.appendChild(opt);
       });
 
-      return {
-        bestWpmId: bestWpmRec ? bestWpmRec.id : null,
-        bestTimeId: bestTimeRec ? bestTimeRec.id : null
-      };
+      const activeText = texts.find(t => t.id === selectEl.value);
+      if (activeText) {
+        document.getElementById('standalone-word-count').value = activeText.wordCount || 100;
+        document.getElementById('standalone-read-count').textContent = activeText.readCount + 1;
+      } else {
+        document.getElementById('standalone-word-count').value = 100;
+        document.getElementById('standalone-read-count').textContent = 1;
+      }
+
+      renderStandaloneTimerHistoryList();
     }
 
-    function renderTimerHistoryList() {
-      const activeText = texts.find(t => t.id === currentTextId);
-      const listEl = document.getElementById('history-list');
-      const totalCountEl = document.getElementById('history-total-count');
+    function startStandaloneTimer() {
+      if (standaloneTimerRunning) return;
+      standaloneTimerRunning = true;
+      standaloneTimerStart = Date.now();
+      standaloneTimerInterval = setInterval(() => {
+        const ms = standaloneElapsedBase + (Date.now() - standaloneTimerStart);
+        document.getElementById('standalone-timer-display').textContent = formatTime(ms);
+        const wordCount = parseInt(document.getElementById('standalone-word-count').value, 10) || 0;
+        const wpm = computeWpm(wordCount, ms);
+        document.getElementById('standalone-wpm-live').textContent = wpm > 0 ? `${wpm}` : '—';
+      }, 100);
 
-      if (!activeText || !activeText.history || activeText.history.length === 0) {
-        totalCountEl.textContent = "0件";
+      document.getElementById('btn-standalone-start').disabled = true;
+      document.getElementById('btn-standalone-start').classList.add('opacity-50');
+      document.getElementById('btn-standalone-stop').disabled = false;
+      document.getElementById('btn-standalone-stop').classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+
+    function stopStandaloneTimer() {
+      if (!standaloneTimerRunning) return;
+      standaloneElapsedBase += Date.now() - standaloneTimerStart;
+      standaloneTimerRunning = false;
+      clearInterval(standaloneTimerInterval);
+
+      document.getElementById('btn-standalone-start').disabled = false;
+      document.getElementById('btn-standalone-start').classList.remove('opacity-50');
+      document.getElementById('btn-standalone-stop').disabled = true;
+      document.getElementById('btn-standalone-stop').classList.add('opacity-50', 'cursor-not-allowed');
+    }
+
+    function resetStandaloneTimer() {
+      clearInterval(standaloneTimerInterval);
+      standaloneTimerRunning = false;
+      standaloneElapsedBase = 0;
+      standaloneTimerStart = 0;
+
+      document.getElementById('standalone-timer-display').textContent = '00:00.0';
+      document.getElementById('standalone-wpm-live').textContent = '—';
+
+      document.getElementById('btn-standalone-start').disabled = false;
+      document.getElementById('btn-standalone-start').classList.remove('opacity-50');
+      document.getElementById('btn-standalone-stop').disabled = true;
+      document.getElementById('btn-standalone-stop').classList.add('opacity-50', 'cursor-not-allowed');
+    }
+
+    function setStandaloneStarRating(rating) {
+      standaloneSelectedRating = rating;
+      document.querySelectorAll('#standalone-star-rating i').forEach(star => {
+        const r = parseInt(star.dataset.star, 10);
+        star.className = r <= rating ? "fa-solid fa-star text-amber-400" : "fa-solid fa-star text-slate-300";
+      });
+    }
+
+    function saveStandaloneTimerRecord() {
+      const ms = standaloneTimerRunning ? standaloneElapsedBase + (Date.now() - standaloneTimerStart) : standaloneElapsedBase;
+      if (ms <= 0) return;
+
+      if (standaloneTimerRunning) stopStandaloneTimer();
+
+      const selectVal = document.getElementById('standalone-text-select').value;
+      const wordCount = parseInt(document.getElementById('standalone-word-count').value, 10) || 0;
+      const readCountVal = parseInt(document.getElementById('standalone-read-count').textContent, 10) || 1;
+      const wpm = computeWpm(wordCount, ms);
+      const memoText = document.getElementById('standalone-memo').value.trim();
+
+      const record = {
+        id: "rec-" + Date.now(),
+        date: new Date().toISOString(),
+        count: readCountVal,
+        timeMs: ms,
+        wpm: wpm,
+        memo: memoText,
+        rating: standaloneSelectedRating
+      };
+
+      if (selectVal === 'free') {
+        standaloneFreeHistory.unshift(record);
+        localStorage.setItem('ondoc_free_history', JSON.stringify(standaloneFreeHistory));
+      } else {
+        const activeText = texts.find(t => t.id === selectVal);
+        if (activeText) {
+          activeText.readCount = readCountVal;
+          activeText.history.unshift(record);
+          saveToLocalStorage();
+        }
+      }
+
+      document.getElementById('standalone-memo').value = '';
+      setStandaloneStarRating(0);
+      resetStandaloneTimer();
+      renderStandaloneTimerHistoryList();
+      renderTree();
+    }
+
+    function renderStandaloneTimerHistoryList() {
+      const selectVal = document.getElementById('standalone-text-select').value;
+      const listEl = document.getElementById('standalone-history-list');
+
+      let historyArr = [];
+      if (selectVal === 'free') {
+        historyArr = standaloneFreeHistory;
+      } else {
+        const activeText = texts.find(t => t.id === selectVal);
+        if (activeText && activeText.history) historyArr = activeText.history;
+      }
+
+      if (historyArr.length === 0) {
         listEl.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">まだ履歴はありません。</p>';
         return;
       }
 
-      totalCountEl.textContent = `${activeText.history.length}件`;
-      const { bestWpmId, bestTimeId } = getBestRecordIds(activeText.history);
-
-      listEl.innerHTML = activeText.history.map(r => {
+      listEl.innerHTML = historyArr.map(r => {
         const d = new Date(r.date);
-        const dateStr = `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+        // 日付の文字色を見やすく改善 (濃いスレート色)
+        const dateStr = `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
         
         let starsHtml = '';
-        if (r.rating > 0) {
-          starsHtml = `<span class="text-amber-400 text-[10px] ml-1">` + '★'.repeat(r.rating) + `</span>`;
-        }
-
-        let badges = '';
-        if (r.id === bestWpmId && r.id === bestTimeId) {
-          badges = `<span class="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">🏆 自己ベスト</span>`;
-        } else if (r.id === bestWpmId) {
-          badges = `<span class="text-[9px] font-bold bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded-full">⚡ 最速WPM</span>`;
-        } else if (r.id === bestTimeId) {
-          badges = `<span class="text-[9px] font-bold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">⏱ 最速タイム</span>`;
-        }
+        if (r.rating > 0) starsHtml = `<span class="text-amber-400 text-[10px] ml-1">` + '★'.repeat(r.rating) + `</span>`;
 
         return `
-          <div class="p-2.5 bg-slate-50 border border-slate-100 rounded-xl flex flex-col gap-1">
+          <div class="p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl flex flex-col gap-1">
             <div class="flex items-center justify-between text-xs">
               <div class="flex items-center gap-1.5 font-mono-num font-bold text-slate-700">
-                <span class="text-indigo-600">${r.count}回目</span>
+                <span class="theme-brand-text">${r.count}回目</span>
                 <span>${formatTime(r.timeMs)}</span>
-                <span class="text-slate-400 text-[11px]">(${r.wpm || 0} WPM)</span>
+                <span class="text-slate-500 text-[11px]">(${r.wpm || 0} WPM)</span>
                 ${starsHtml}
               </div>
-              <div class="flex items-center gap-1">
-                ${badges}
-                <button onclick="deleteHistoryRecord('${r.id}')" class="text-slate-300 hover:text-rose-500 p-1 transition"><i class="fa-solid fa-xmark text-xs"></i></button>
-              </div>
+              <button onclick="deleteStandaloneHistoryRecord('${r.id}')" class="text-slate-400 hover:text-rose-500 p-1 transition"><i class="fa-solid fa-xmark text-xs"></i></button>
             </div>
-            ${r.memo ? `<p class="text-[11px] text-slate-500 bg-white p-1.5 rounded-lg border border-slate-100">${escapeHtml(r.memo)}</p>` : ''}
-            <span class="text-[9px] text-slate-300 font-mono-num">${dateStr}</span>
+            ${r.memo ? `<p class="text-[11px] text-slate-600 bg-white p-1.5 rounded-lg border border-slate-100">${escapeHtml(r.memo)}</p>` : ''}
+            <!-- 視認性を高めた日付表記 -->
+            <span class="text-[10px] text-slate-500 font-semibold font-mono-num mt-0.5">${dateStr}</span>
           </div>
         `;
       }).join('');
     }
 
-    function deleteHistoryRecord(recordId) {
-      const activeText = texts.find(t => t.id === currentTextId);
-      if (!activeText) return;
+    function deleteStandaloneHistoryRecord(recordId) {
       if (!confirm('この音読履歴を削除しますか？')) return;
 
-      activeText.history = activeText.history.filter(r => r.id !== recordId);
-      saveToLocalStorage();
-      renderTimerHistoryList();
+      const selectVal = document.getElementById('standalone-text-select').value;
+      if (selectVal === 'free') {
+        standaloneFreeHistory = standaloneFreeHistory.filter(r => r.id !== recordId);
+        localStorage.setItem('ondoc_free_history', JSON.stringify(standaloneFreeHistory));
+      } else {
+        const activeText = texts.find(t => t.id === selectVal);
+        if (activeText) {
+          activeText.history = activeText.history.filter(r => r.id !== recordId);
+          saveToLocalStorage();
+        }
+      }
+      renderStandaloneTimerHistoryList();
     }
 
     // ------------------- モーダル & 保存処理 -------------------
@@ -1361,7 +1536,7 @@
         if (folderId) expandedFolderIds.add(folderId);
 
         lastSelectedFolderId = folderId || "";
-        localStorage.setItem('chunk_reader_last_folder_v6', lastSelectedFolderId);
+        localStorage.setItem('ondoc_last_folder_v1', lastSelectedFolderId);
 
         saveToLocalStorage();
 
@@ -1413,21 +1588,21 @@
       deleteTarget = null;
       renderTree();
       renderReader();
-      renderTimerView();
     }
 
     function handleExportData() {
       const backupData = {
-        version: "6.0",
+        version: "OnDoc-1.0",
         exportDate: new Date().toISOString(),
         folders: folders,
-        texts: texts
+        texts: texts,
+        freeHistory: standaloneFreeHistory
       };
 
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `chunk_reader_backup_${new Date().toISOString().slice(0,10)}.json`);
+      downloadAnchor.setAttribute("download", `ondoc_backup_${new Date().toISOString().slice(0,10)}.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
@@ -1444,17 +1619,15 @@
           if (imported.folders && imported.texts) {
             folders = imported.folders;
             texts = imported.texts;
+            if (imported.freeHistory) standaloneFreeHistory = imported.freeHistory;
             if (texts.length > 0) currentTextId = texts[0].id;
             saveToLocalStorage();
+            localStorage.setItem('ondoc_free_history', JSON.stringify(standaloneFreeHistory));
             renderTree();
             renderReader();
-            renderTimerView();
-            alert('データを無事に復元しました！');
-          } else {
-            alert('有効なバックアップファイルではありません。');
           }
         } catch (err) {
-          alert('ファイルの読み込みに失敗しました。');
+          console.error("Restore error", err);
         }
       };
       reader.readAsText(file);
