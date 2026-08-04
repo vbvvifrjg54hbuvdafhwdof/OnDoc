@@ -14,7 +14,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/iro.js/5.5.2/iro.min.js"></script>
+  
   <style>
     :root { --brand-primary: #6366f1; --brand-text: #4338ca; --brand-soft-bg: #f5f3ff; --important-color: #f43f5e; --action-color: #475569; --stop-color: #ef4444; --wpm-color: #0284c7; --history-count-color: #6366f1; }
     body { font-family: 'Inter', -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; background-color: #f8fafc; color: #1e293b; }
@@ -35,7 +35,6 @@
     .chunk-en { display: inline-block !important; max-width: 100% !important; white-space: normal !important; word-break: break-word !important; overflow-wrap: break-word !important; line-height: 1.2 !important; color: #0f172a !important; }
     .chunk-ja { position: absolute !important; top: 100% !important; left: 0 !important; width: 100% !important; margin-top: 1px !important; font-size: 0.62rem !important; line-height: 1.15 !important; color: var(--brand-text) !important; font-weight: 600 !important; white-space: normal !important; word-break: break-all !important; pointer-events: none !important; z-index: 10 !important; }
     .slash-mark { display: inline-block !important; vertical-align: top !important; color: #cbd5e1 !important; font-weight: 300 !important; margin: 0 2px !important; user-select: none !important; }
-    .IroPicker { margin: 0 auto; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col pb-24 md:pb-6 selection:bg-slate-200">
@@ -243,14 +242,38 @@
     </div>
   </div>
 
+  <!-- スマホ完全対応 HSB(HSV) 平面カラーピッカーモーダル -->
   <div id="modal-picker-popup" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-slate-100 space-y-3 text-center">
+    <div class="bg-white rounded-2xl max-w-xs w-full p-4 shadow-2xl border border-slate-100 space-y-3">
       <div class="flex items-center justify-between border-b border-slate-100 pb-2">
         <h4 id="popup-target-title" class="text-xs font-bold text-slate-800 truncate">カラー調整</h4>
-        <span id="popup-hex-value" class="text-xs font-mono-num font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">#6366f1</span>
+        <span id="popup-hex-display" class="text-xs font-mono-num font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">#6366f1</span>
       </div>
-      <div class="py-2 flex justify-center"><div id="popup-picker-container"></div></div>
-      <div class="pt-1 flex justify-end"><button id="btn-close-picker-popup" class="w-full py-2.5 theme-action-bg hover:opacity-90 active:scale-95 text-white text-xs font-bold rounded-xl shadow-sm transition">決定</button></div>
+
+      <!-- 2D HSB グラデーション平面 (Saturation x Brightness) -->
+      <div id="hsb-box" class="relative w-full h-44 rounded-xl cursor-pointer overflow-hidden touch-none select-none border border-slate-200">
+        <div id="hsb-bg-hue" class="absolute inset-0"></div>
+        <div class="absolute inset-0" style="background: linear-gradient(to right, #fff, transparent);"></div>
+        <div class="absolute inset-0" style="background: linear-gradient(to top, #000, transparent);"></div>
+        <div id="hsb-pointer" class="absolute w-5 h-5 -ml-2.5 -mt-2.5 rounded-full border-2 border-white shadow-md pointer-events-none" style="box-shadow: 0 0 0 1px rgba(0,0,0,0.5);"></div>
+      </div>
+
+      <!-- 色相(Hue) スライダー -->
+      <div class="space-y-1">
+        <div id="hue-track" class="relative w-full h-6 rounded-lg cursor-pointer touch-none select-none border border-slate-200" style="background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);">
+          <div id="hue-pointer" class="absolute top-0 bottom-0 w-3.5 -ml-1.5 bg-white border border-slate-400 rounded-md shadow-sm pointer-events-none"></div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between gap-2 bg-slate-50 p-2 rounded-xl border border-slate-200">
+        <div class="flex items-center gap-2">
+          <div id="popup-preview" class="w-8 h-8 rounded-lg border border-slate-300 shadow-sm flex-shrink-0"></div>
+          <span id="popup-rgb-display" class="text-[10px] font-mono-num font-bold text-slate-600">R:100 G:100 B:100</span>
+        </div>
+        <button id="btn-close-picker-popup" class="px-4 py-2 theme-action-bg hover:opacity-90 active:scale-95 text-white text-xs font-bold rounded-xl shadow-sm transition">
+          決定
+        </button>
+      </div>
     </div>
   </div>
 
@@ -291,7 +314,9 @@
     let lastSelectedFolderId = localStorage.getItem('ondoc_last_folder_v5') || "";
 
     let customThemeColor = localStorage.getItem('ondoc_theme_color_v5') || "#6366f1", customImportantColor = localStorage.getItem('ondoc_important_color_v5') || "#f43f5e", customActionColor = localStorage.getItem('ondoc_action_color_v5') || "#475569", customStopColor = localStorage.getItem('ondoc_stop_color_v5') || "#ef4444", customWpmColor = localStorage.getItem('ondoc_wpm_color_v5') || "#0284c7", customHistoryCountColor = localStorage.getItem('ondoc_history_count_color_v5') || "#6366f1";
-    let popupPicker = null, currentTargetKey = 'theme';
+    let currentPickerTargetKey = 'theme';
+    let curH = 240, curS = 100, curB = 100;
+
     let config = { showSlash: true, showHighlight: true, transMode: 'tap', isRaw: false }, tappedChunks = {};
     let readerTimerRunning = false, readerTimerStart = 0, readerElapsedBase = 0, readerTimerInterval = null, readerSelectedRating = 0;
     let standaloneTimerRunning = false, standaloneTimerStart = 0, standaloneElapsedBase = 0, standaloneTimerInterval = null, standaloneSelectedRating = 0, standaloneSelectedTextId = 'free';
@@ -299,7 +324,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       applyCustomColors(customThemeColor, customImportantColor, customActionColor, customStopColor, customWpmColor, customHistoryCountColor);
-      loadDataFromStorage(); setupTimerBoxTemplates(); setupEventListeners(); updateToggleStyles(); renderTree(); switchView('reader');
+      loadDataFromStorage(); setupTimerBoxTemplates(); setupEventListeners(); setupCustomHsbPicker(); updateToggleStyles(); renderTree(); switchView('reader');
     });
 
     function applyCustomColors(themeHex, importantHex, actionHex, stopHex, wpmHex, historyCountHex) {
@@ -317,13 +342,109 @@
     function getTargetColor(k) { switch(k){ case 'theme':return customThemeColor; case 'important':return customImportantColor; case 'action':return customActionColor; case 'stop':return customStopColor; case 'wpm':return customWpmColor; case 'historyCount':return customHistoryCountColor; default:return "#6366f1"; } }
     function getTargetName(k) { switch(k){ case 'theme':return "メインテーマカラー"; case 'important':return "重要語ハイライトカラー"; case 'action':return "保存・追加ボタンカラー"; case 'stop':return "タイマー停止ボタンカラー"; case 'wpm':return "WPM表示カラー"; case 'historyCount':return "音読履歴の回数カラー"; default:return "カラー選択"; } }
 
+    /* --- 自作 HSB (HSV) 2D平面カラーピッカー演算・操作 --- */
+    function hsbToRgb(h, s, v) {
+      s /= 100; v /= 100;
+      const k = (n) => (n + h / 60) % 6;
+      const f = (n) => v * (1 - s * Math.max(0, Math.min(k(n), 4 - k(n), 1)));
+      return [Math.round(255 * f(5)), Math.round(255 * f(3)), Math.round(255 * f(1))];
+    }
+
+    function rgbToHsb(r, g, b) {
+      r /= 255; g /= 255; b /= 255;
+      const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+      let h = 0; const s = max === 0 ? 0 : d / max, v = max;
+      if (max !== min) {
+        switch (max) {
+          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+      }
+      return [Math.round(h * 360), Math.round(s * 100), Math.round(v * 100)];
+    }
+
+    function rgbToHex(r, g, b) { return "#" + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join(''); }
+    function hexToRgb(hex) {
+      let c = hex.replace('#', ''); if (c.length === 3) c = c.split('').map(x => x + x).join('');
+      const n = parseInt(c, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    }
+
     function openPickerPopup(targetKey) {
-      currentTargetKey = targetKey; const currentHex = getTargetColor(targetKey);
-      document.getElementById('popup-target-title').textContent = getTargetName(targetKey); document.getElementById('popup-hex-value').textContent = currentHex; document.getElementById('modal-picker-popup').classList.remove('hidden');
-      if (!popupPicker) {
-        popupPicker = new iro.ColorPicker("#popup-picker-container", { width: 210, color: currentHex, borderWidth: 1, borderColor: "#e2e8f0", layout: [{ component: iro.ui.Box }, { component: iro.ui.Slider, options: { sliderType: 'hue' } }] });
-        popupPicker.on('color:change', (color) => { const hex = color.hexString; document.getElementById('popup-hex-value').textContent = hex; updateColorByTarget(currentTargetKey, hex); });
-      } else { popupPicker.color.set(currentHex); }
+      currentPickerTargetKey = targetKey;
+      const hex = getTargetColor(targetKey), rgb = hexToRgb(hex), hsb = rgbToHsb(rgb[0], rgb[1], rgb[2]);
+      curH = hsb[0]; curS = hsb[1]; curB = hsb[2];
+
+      document.getElementById('popup-target-title').textContent = getTargetName(targetKey);
+      updateHsbPickerUI();
+      document.getElementById('modal-picker-popup').classList.remove('hidden');
+    }
+
+    function updateHsbPickerUI() {
+      const rgb = hsbToRgb(curH, curS, curB), hex = rgbToHex(rgb[0], rgb[1], rgb[2]);
+      document.getElementById('hsb-bg-hue').style.backgroundColor = `hsl(${curH}, 100%, 50%)`;
+
+      const pointer = document.getElementById('hsb-pointer');
+      pointer.style.left = `${curS}%`;
+      pointer.style.top = `${100 - curB}%`;
+      pointer.style.backgroundColor = hex;
+
+      const huePointer = document.getElementById('hue-pointer');
+      huePointer.style.left = `${(curH / 360) * 100}%`;
+
+      document.getElementById('popup-hex-display').textContent = hex;
+      document.getElementById('popup-preview').style.backgroundColor = hex;
+      document.getElementById('popup-rgb-display').textContent = `R:${rgb[0]} G:${rgb[1]} B:${rgb[2]}`;
+
+      updateColorByTarget(currentPickerTargetKey, hex);
+    }
+
+    function setupCustomHsbPicker() {
+      const hsbBox = document.getElementById('hsb-box');
+      const hueTrack = document.getElementById('hue-track');
+
+      const handleHsbMove = (e) => {
+        const rect = hsbBox.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        let x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        let y = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+
+        curS = Math.round(x * 100);
+        curB = Math.round((1 - y) * 100);
+        updateHsbPickerUI();
+      };
+
+      const handleHueMove = (e) => {
+        const rect = hueTrack.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        let x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+
+        curH = Math.round(x * 360);
+        if (curH >= 360) curH = 359;
+        updateHsbPickerUI();
+      };
+
+      let isDraggingHsb = false, isDraggingHue = false;
+
+      hsbBox.addEventListener('mousedown', (e) => { isDraggingHsb = true; handleHsbMove(e); });
+      hsbBox.addEventListener('touchstart', (e) => { isDraggingHsb = true; handleHsbMove(e); }, { passive: true });
+
+      hueTrack.addEventListener('mousedown', (e) => { isDraggingHue = true; handleHueMove(e); });
+      hueTrack.addEventListener('touchstart', (e) => { isDraggingHue = true; handleHueMove(e); }, { passive: true });
+
+      window.addEventListener('mousemove', (e) => {
+        if (isDraggingHsb) handleHsbMove(e);
+        if (isDraggingHue) handleHueMove(e);
+      });
+      window.addEventListener('touchmove', (e) => {
+        if (isDraggingHsb) handleHsbMove(e);
+        if (isDraggingHue) handleHueMove(e);
+      }, { passive: true });
+
+      window.addEventListener('mouseup', () => { isDraggingHsb = false; isDraggingHue = false; });
+      window.addEventListener('touchend', () => { isDraggingHsb = false; isDraggingHue = false; });
     }
 
     function updateColorByTarget(k, hex) {
