@@ -14,7 +14,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/iro.js/5.5.2/iro.min.js"></script>
   <style>
     :root { --brand-primary: #6366f1; --brand-text: #4338ca; --brand-soft-bg: #f5f3ff; --important-color: #f43f5e; --action-color: #475569; --stop-color: #ef4444; --wpm-color: #0284c7; --history-count-color: #6366f1; }
     body { font-family: 'Inter', -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; background-color: #f8fafc; color: #1e293b; }
@@ -35,7 +34,6 @@
     .chunk-en { display: inline-block !important; max-width: 100% !important; white-space: normal !important; word-break: break-word !important; overflow-wrap: break-word !important; line-height: 1.2 !important; color: #0f172a !important; }
     .chunk-ja { position: absolute !important; top: 100% !important; left: 0 !important; width: 100% !important; margin-top: 1px !important; font-size: 0.62rem !important; line-height: 1.15 !important; color: var(--brand-text) !important; font-weight: 600 !important; white-space: normal !important; word-break: break-all !important; pointer-events: none !important; z-index: 10 !important; }
     .slash-mark { display: inline-block !important; vertical-align: top !important; color: #cbd5e1 !important; font-weight: 300 !important; margin: 0 2px !important; user-select: none !important; }
-    .IroPicker { margin: 0 auto; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col pb-24 md:pb-6 selection:bg-slate-200">
@@ -338,7 +336,7 @@
     function getTargetColor(k) { switch(k){ case 'theme':return customThemeColor; case 'important':return customImportantColor; case 'action':return customActionColor; case 'stop':return customStopColor; case 'wpm':return customWpmColor; case 'historyCount':return customHistoryCountColor; default:return "#6366f1"; } }
     function getTargetName(k) { switch(k){ case 'theme':return "メインテーマカラー"; case 'important':return "重要語ハイライトカラー"; case 'action':return "保存・追加ボタンカラー"; case 'stop':return "タイマー停止ボタンカラー"; case 'wpm':return "WPM表示カラー"; case 'historyCount':return "音読履歴の回数カラー"; default:return "カラー選択"; } }
 
-    /* HSB (HSV) 演算 & 自作2D平面カラーピッカースクリプト */
+    /* HSB (HSV) 演算 & 2D平面ピッカー */
     function hsbToRgb(h, s, v) {
       s /= 100; v /= 100;
       const k = (n) => (n + h / 60) % 6;
@@ -449,24 +447,27 @@
       applyCustomColors(t, i, a, s, w, h); if (k === 'important') renderReader(); if (k === 'historyCount') { renderReaderHistoryList(); renderStandaloneTimerHistoryList(); }
     }
 
-    /* 重要語ハイライト レンダリング (単語・熟語・複数一致対応) */
+    /* カンマ（,）区切りの単語・熟語・複数一致ハイライト対応 */
     function renderChunkEn(enText, isImportant, showHighlight) {
       if (!showHighlight || !isImportant) return document.createTextNode(enText);
 
-      let keywords = [];
+      let rawList = [];
       if (typeof isImportant === 'string') {
-        keywords = [isImportant.trim()];
+        rawList = isImportant.split(',');
       } else if (Array.isArray(isImportant)) {
-        keywords = isImportant.map(k => String(k).trim()).filter(k => k.length > 0);
+        isImportant.forEach(item => {
+          if (typeof item === 'string') rawList.push(...item.split(','));
+          else rawList.push(String(item));
+        });
       } else if (isImportant === true) {
         const firstWord = enText.trim().split(/\s+/)[0];
-        if (firstWord) keywords = [firstWord];
+        if (firstWord) rawList = [firstWord];
       }
 
-      keywords = keywords.filter(k => k.length > 0);
+      let keywords = rawList.map(k => String(k).trim()).filter(k => k.length > 0);
       if (keywords.length === 0) return document.createTextNode(enText);
 
-      // 長いフレーズ順にソート
+      // フレーズの長い順（熟語優先）にソート
       keywords.sort((a, b) => b.length - a.length);
 
       const escapedKeywords = keywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
