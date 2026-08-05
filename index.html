@@ -68,8 +68,11 @@
     <section id="view-reader" class="bg-white rounded-2xl p-4 md:p-7 shadow-sm border border-slate-200/80 min-h-[75vh] flex flex-col justify-between space-y-4">
       <div>
         <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4 gap-2">
-          <h2 id="current-title" class="text-base md:text-xl font-bold tracking-tight leading-snug text-slate-800"></h2>
-          <button id="btn-open-delete" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition active:scale-95" title="削除"><i class="fa-solid fa-trash-can text-sm"></i></button>
+          <div class="flex items-center gap-2 truncate">
+            <h2 id="current-title" class="text-base md:text-xl font-bold tracking-tight leading-snug text-slate-800 truncate"></h2>
+            <button id="btn-open-edit-reader-title" class="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg transition flex-shrink-0" title="タイトルを変更"><i class="fa-solid fa-pen-to-square text-sm"></i></button>
+          </div>
+          <button id="btn-open-delete" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition active:scale-95 flex-shrink-0" title="削除"><i class="fa-solid fa-trash-can text-sm"></i></button>
         </div>
         <div id="reader-timer-top" class="timer-box-template mb-5"></div>
         <div id="reader-content" class="text-base md:text-lg my-6"></div>
@@ -271,6 +274,18 @@
     </div>
   </div>
 
+  <!-- 名前変更モーダル -->
+  <div id="modal-edit-name" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-slate-100 space-y-3">
+      <h3 id="modal-edit-name-title" class="text-sm font-bold text-slate-800">名前を変更</h3>
+      <input type="text" id="edit-name-input" placeholder="新しい名前を入力" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-base md:text-xs font-medium focus:outline-none transition">
+      <div class="flex justify-end gap-2 pt-1">
+        <button id="btn-cancel-edit-name" class="px-3 py-1.5 rounded-lg text-slate-600 text-xs font-semibold min-h-[38px]">キャンセル</button>
+        <button id="btn-save-edit-name" class="px-4 py-1.5 rounded-lg theme-action-bg hover:opacity-90 text-white text-xs font-bold shadow-sm transition min-h-[38px]">保存</button>
+      </div>
+    </div>
+  </div>
+
   <div id="modal-folder" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-slate-100 space-y-3">
       <h3 id="modal-folder-title" class="text-sm font-bold text-slate-800">新しいフォルダを作成</h3>
@@ -304,7 +319,7 @@
     const SAMPLE_FOLDERS = [{ id: "f-1", name: "市販英単語帳・長文", parentId: null }, { id: "f-2", name: "人工知能 (AI)", parentId: null }];
     const SAMPLE_TEXTS = [{ id: "text-sample-simple", folderId: "f-1", title: "速読英単語 Lesson 01 (JSONなし参考書)", wordCount: 150, readCount: 0, history: [], data: [] }, { id: "text-1", folderId: "f-2", title: "サンプル：AIと将来の仕事", wordCount: 118, readCount: 0, history: [], data: [{ "sentence_id": 1, "chunks": [{ "en": "In recent years,", "is_important": false, "ja": "近年、" }, { "en": "artificial intelligence has advanced", "is_important": "artificial intelligence", "ja": "人工知能は進化してきた" }, { "en": "at an unprecedented speed,", "is_important": "unprecedented speed", "ja": "前例のない速度で、" }, { "en": "changing the way we live and work.", "is_important": false, "ja": "私たちが生活し働く方法を変えながら。" }] }] }];
 
-    let folders = [], texts = [], currentTextId = null, targetParentFolderId = null, deleteTarget = null, simpleTextbookSourceTab = 'library', expandedFolderIds = new Set(), isTreeInit = false;
+    let folders = [], texts = [], currentTextId = null, targetParentFolderId = null, deleteTarget = null, editTarget = null, simpleTextbookSourceTab = 'library', expandedFolderIds = new Set(), isTreeInit = false;
     let lastSelectedFolderId = localStorage.getItem('ondoc_last_folder_v5') || "";
 
     let customThemeColor = localStorage.getItem('ondoc_theme_color_v5') || "#6366f1", customImportantColor = localStorage.getItem('ondoc_important_color_v5') || "#f43f5e", customActionColor = localStorage.getItem('ondoc_action_color_v5') || "#475569", customStopColor = localStorage.getItem('ondoc_stop_color_v5') || "#ef4444", customWpmColor = localStorage.getItem('ondoc_wpm_color_v5') || "#0284c7", customHistoryCountColor = localStorage.getItem('ondoc_history_count_color_v5') || "#6366f1";
@@ -447,7 +462,46 @@
       applyCustomColors(t, i, a, s, w, h); if (k === 'important') renderReader(); if (k === 'historyCount') { renderReaderHistoryList(); renderStandaloneTimerHistoryList(); }
     }
 
-    /* カンマ（,）区切りの単語・熟語・複数一致ハイライト対応 */
+    /* 名前変更処理 */
+    function openEditNameModal(type, id) {
+      editTarget = { type, id };
+      const input = document.getElementById('edit-name-input');
+      if (type === 'folder') {
+        const f = folders.find(item => item.id === id);
+        if (f) input.value = f.name;
+        document.getElementById('modal-edit-name-title').textContent = "フォルダ名を変更";
+      } else if (type === 'text') {
+        const t = texts.find(item => item.id === id);
+        if (t) input.value = t.title;
+        document.getElementById('modal-edit-name-title').textContent = "教材タイトルを変更";
+      }
+      document.getElementById('modal-edit-name').classList.remove('hidden');
+      setTimeout(() => input.focus(), 100);
+    }
+
+    function handleSaveEditName() {
+      if (!editTarget) return;
+      const newName = document.getElementById('edit-name-input').value.trim();
+      if (!newName) return;
+
+      if (editTarget.type === 'folder') {
+        const f = folders.find(item => item.id === editTarget.id);
+        if (f) f.name = newName;
+      } else if (editTarget.type === 'text') {
+        const t = texts.find(item => item.id === editTarget.id);
+        if (t) t.title = newName;
+      }
+
+      saveToLocalStorage();
+      document.getElementById('modal-edit-name').classList.add('hidden');
+      editTarget = null;
+
+      renderTree();
+      renderReader();
+      renderStandaloneTimerTree();
+    }
+
+    /* カンマ区切りの重要語ハイライト処理 */
     function renderChunkEn(enText, isImportant, showHighlight) {
       if (!showHighlight || !isImportant) return document.createTextNode(enText);
 
@@ -467,7 +521,6 @@
       let keywords = rawList.map(k => String(k).trim()).filter(k => k.length > 0);
       if (keywords.length === 0) return document.createTextNode(enText);
 
-      // フレーズの長い順（熟語優先）にソート
       keywords.sort((a, b) => b.length - a.length);
 
       const escapedKeywords = keywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
@@ -528,6 +581,12 @@
       document.getElementById('btn-close-settings').onclick = () => document.getElementById('modal-settings').classList.add('hidden');
       document.getElementById('btn-close-picker-popup').onclick = () => document.getElementById('modal-picker-popup').classList.add('hidden');
       document.getElementById('btn-reset-colors').onclick = () => { applyCustomColors("#6366f1", "#f43f5e", "#475569", "#ef4444", "#0284c7", "#6366f1"); renderReader(); renderReaderHistoryList(); renderStandaloneTimerHistoryList(); };
+
+      /* 名前変更モーダル */
+      document.getElementById('btn-cancel-edit-name').onclick = () => document.getElementById('modal-edit-name').classList.add('hidden');
+      document.getElementById('btn-save-edit-name').onclick = handleSaveEditName;
+      document.getElementById('edit-name-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSaveEditName(); });
+      document.getElementById('btn-open-edit-reader-title').onclick = () => { if (currentTextId) openEditNameModal('text', currentTextId); };
 
       document.getElementById('btn-add-simple-text-lib').onclick = () => { simpleTextbookSourceTab = 'library'; openSimpleTextbookModal(null); };
       document.getElementById('btn-add-simple-text-timer').onclick = () => { simpleTextbookSourceTab = 'timer'; openSimpleTextbookModal(null); };
@@ -603,8 +662,9 @@
           const totalItems = texts.filter(t => t.folderId === f.id).length + folders.filter(sub => sub.parentId === f.id).length;
           const folderHeader = document.createElement('div');
           folderHeader.className = "flex items-center justify-between p-2.5 rounded-xl text-slate-700 bg-slate-50 hover:bg-slate-100 font-semibold cursor-pointer transition select-none border border-slate-100 min-h-[44px]";
-          folderHeader.innerHTML = `<div class="flex items-center gap-2 truncate"><i class="fa-solid ${isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'} text-slate-400 text-xs w-3"></i><i class="fa-solid ${isExpanded ? 'fa-folder-open text-amber-500' : 'fa-folder text-amber-400'} text-base"></i><span class="truncate text-sm font-bold text-slate-800">${escapeHtml(f.name)}</span><span class="text-[10px] font-medium text-slate-400 bg-white px-2 py-0.5 rounded-full border border-slate-200">${totalItems}件</span></div><div class="flex items-center gap-1"><button type="button" class="btn-add-text-to-folder p-2 text-slate-400 hover:text-slate-700 rounded-lg"><i class="fa-solid fa-file-circle-plus text-sm pointer-events-none"></i></button><button type="button" class="btn-add-sub p-2 text-slate-400 hover:text-indigo-600 rounded-lg"><i class="fa-solid fa-plus text-sm pointer-events-none"></i></button><button type="button" class="btn-del-folder p-2 text-slate-400 hover:text-rose-600 rounded-lg"><i class="fa-solid fa-trash-can text-sm pointer-events-none"></i></button></div>`;
+          folderHeader.innerHTML = `<div class="flex items-center gap-2 truncate"><i class="fa-solid ${isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'} text-slate-400 text-xs w-3"></i><i class="fa-solid ${isExpanded ? 'fa-folder-open text-amber-500' : 'fa-folder text-amber-400'} text-base"></i><span class="truncate text-sm font-bold text-slate-800">${escapeHtml(f.name)}</span><span class="text-[10px] font-medium text-slate-400 bg-white px-2 py-0.5 rounded-full border border-slate-200">${totalItems}件</span></div><div class="flex items-center gap-0.5"><button type="button" title="名前変更" class="btn-edit-folder p-1.5 text-slate-400 hover:text-slate-700 rounded-lg transition"><i class="fa-solid fa-pen-to-square text-xs pointer-events-none"></i></button><button type="button" title="教材を追加(JSONなし)" class="btn-add-text-to-folder p-1.5 text-slate-400 hover:text-slate-700 rounded-lg transition"><i class="fa-solid fa-file-circle-plus text-xs pointer-events-none"></i></button><button type="button" title="サブフォルダ追加" class="btn-add-sub p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg transition"><i class="fa-solid fa-plus text-xs pointer-events-none"></i></button><button type="button" title="フォルダ削除" class="btn-del-folder p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition"><i class="fa-solid fa-trash-can text-xs pointer-events-none"></i></button></div>`;
           folderHeader.onclick = () => { if (expandedFolderIds.has(f.id)) expandedFolderIds.delete(f.id); else expandedFolderIds.add(f.id); renderTree(); };
+          folderHeader.querySelector('.btn-edit-folder').onclick = (e) => { e.preventDefault(); e.stopPropagation(); openEditNameModal('folder', f.id); };
           folderHeader.querySelector('.btn-add-text-to-folder').onclick = (e) => { e.preventDefault(); e.stopPropagation(); simpleTextbookSourceTab = 'library'; openSimpleTextbookModal(f.id); };
           folderHeader.querySelector('.btn-add-sub').onclick = (e) => { e.preventDefault(); e.stopPropagation(); openFolderModal(f.id); };
           folderHeader.querySelector('.btn-del-folder').onclick = (e) => { e.preventDefault(); e.stopPropagation(); deleteTarget = { type: 'folder', id: f.id }; document.getElementById('delete-modal-heading').textContent = "フォルダを削除しますか？"; document.getElementById('delete-target-title').textContent = `「${f.name}」とその中の全データ`; document.getElementById('modal-delete').classList.remove('hidden'); };
@@ -614,8 +674,9 @@
         texts.filter(t => t.folderId === parentId).forEach(t => {
           const li = document.createElement('li'), hasJson = Array.isArray(t.data) && t.data.length > 0, isActive = hasJson ? (t.id === currentTextId) : (t.id === standaloneSelectedTextId);
           li.className = `p-2.5 px-3 rounded-xl cursor-pointer transition flex items-center justify-between gap-2.5 min-h-[44px] ${isActive ? 'theme-brand-light theme-brand-border border text-slate-800 font-bold' : 'hover:bg-slate-50 bg-white border border-slate-200/60'}`;
-          li.innerHTML = `<div class="flex items-center gap-2.5 truncate min-w-0"><i class="fa-regular ${hasJson ? 'fa-file-code' : 'fa-file-lines'} ${isActive ? 'theme-brand-text' : 'text-slate-400'} text-sm flex-shrink-0"></i><span class="truncate text-xs md:text-sm font-medium tracking-tight text-slate-800">${escapeHtml(t.title)}</span>${!hasJson ? `<span class="text-[9px] bg-slate-100 text-slate-600 font-bold px-1.5 py-0.2 rounded flex-shrink-0">参考書</span>` : ''}</div><div class="flex items-center gap-2 flex-shrink-0"><span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono-num">${t.readCount || 0}回</span><button class="btn-del-text p-2 text-slate-400 hover:text-rose-600 rounded-lg"><i class="fa-solid fa-trash-can text-xs pointer-events-none"></i></button></div>`;
+          li.innerHTML = `<div class="flex items-center gap-2.5 truncate min-w-0"><i class="fa-regular ${hasJson ? 'fa-file-code' : 'fa-file-lines'} ${isActive ? 'theme-brand-text' : 'text-slate-400'} text-sm flex-shrink-0"></i><span class="truncate text-xs md:text-sm font-medium tracking-tight text-slate-800">${escapeHtml(t.title)}</span>${!hasJson ? `<span class="text-[9px] bg-slate-100 text-slate-600 font-bold px-1.5 py-0.2 rounded flex-shrink-0">参考書</span>` : ''}</div><div class="flex items-center gap-1 flex-shrink-0"><span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono-num">${t.readCount || 0}回</span><button title="名前変更" class="btn-edit-text p-1.5 text-slate-400 hover:text-slate-700 rounded-lg transition"><i class="fa-solid fa-pen-to-square text-xs pointer-events-none"></i></button><button title="削除" class="btn-del-text p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition"><i class="fa-solid fa-trash-can text-xs pointer-events-none"></i></button></div>`;
           li.onclick = (e) => { e.stopPropagation(); if (hasJson) { currentTextId = t.id; tappedChunks = {}; resetReaderTimer(); renderTree(); switchView('reader'); } else { standaloneSelectedTextId = t.id; document.getElementById('standalone-active-title').textContent = `📖 ${t.title}`; document.getElementById('standalone-word-count').value = t.wordCount || 150; document.getElementById('standalone-read-count').textContent = t.readCount + 1; renderTree(); renderStandaloneTimerHistoryList(); switchView('timer'); } };
+          li.querySelector('.btn-edit-text').onclick = (e) => { e.preventDefault(); e.stopPropagation(); openEditNameModal('text', t.id); };
           li.querySelector('.btn-del-text').onclick = (e) => { e.preventDefault(); e.stopPropagation(); deleteTarget = { type: 'text', id: t.id }; document.getElementById('delete-modal-heading').textContent = "教材を削除しますか？"; document.getElementById('delete-target-title').textContent = `「${t.title}」`; document.getElementById('modal-delete').classList.remove('hidden'); };
           ul.appendChild(li);
         });
@@ -733,8 +794,9 @@
         folders.filter(f => f.parentId === parentId).forEach(f => {
           const li = document.createElement('li'), isExpanded = expandedFolderIds.has(f.id);
           const folderHeader = document.createElement('div'); folderHeader.className = "flex items-center justify-between p-2.5 rounded-xl text-slate-700 bg-slate-50 border border-slate-100 font-semibold cursor-pointer select-none min-h-[44px]";
-          folderHeader.innerHTML = `<div class="flex items-center gap-2 truncate"><i class="fa-solid ${isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'} text-slate-400 text-xs w-3"></i><i class="fa-solid ${isExpanded ? 'fa-folder-open text-amber-500' : 'fa-folder text-amber-400'} text-sm"></i><span class="truncate text-xs font-bold text-slate-800">${escapeHtml(f.name)}</span></div><button type="button" class="btn-add-text-sub p-2 text-slate-400 hover:text-slate-700 rounded-lg"><i class="fa-solid fa-plus text-xs pointer-events-none"></i></button>`;
+          folderHeader.innerHTML = `<div class="flex items-center gap-2 truncate"><i class="fa-solid ${isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'} text-slate-400 text-xs w-3"></i><i class="fa-solid ${isExpanded ? 'fa-folder-open text-amber-500' : 'fa-folder text-amber-400'} text-sm"></i><span class="truncate text-xs font-bold text-slate-800">${escapeHtml(f.name)}</span></div><div class="flex items-center gap-0.5"><button type="button" title="名前変更" class="btn-edit-folder p-1.5 text-slate-400 hover:text-slate-700 rounded-lg"><i class="fa-solid fa-pen-to-square text-xs pointer-events-none"></i></button><button type="button" title="このフォルダに教材を追加" class="btn-add-text-sub p-1.5 text-slate-400 hover:text-slate-700 rounded-lg"><i class="fa-solid fa-plus text-xs pointer-events-none"></i></button></div>`;
           folderHeader.onclick = () => { if (expandedFolderIds.has(f.id)) expandedFolderIds.delete(f.id); else expandedFolderIds.add(f.id); renderStandaloneTimerTree(); };
+          folderHeader.querySelector('.btn-edit-folder').onclick = (e) => { e.preventDefault(); e.stopPropagation(); openEditNameModal('folder', f.id); };
           folderHeader.querySelector('.btn-add-text-sub').onclick = (e) => { e.preventDefault(); e.stopPropagation(); simpleTextbookSourceTab = 'timer'; openSimpleTextbookModal(f.id); };
           li.appendChild(folderHeader); if (isExpanded) li.appendChild(buildStandaloneTree(f.id, level + 1)); ul.appendChild(li);
         });
@@ -742,8 +804,9 @@
         texts.filter(t => t.folderId === parentId && (!t.data || !Array.isArray(t.data) || t.data.length === 0)).forEach(t => {
           const li = document.createElement('li'), isActive = t.id === standaloneSelectedTextId;
           li.className = `p-2.5 px-3 rounded-xl cursor-pointer transition flex items-center justify-between gap-2 min-h-[44px] ${isActive ? 'theme-brand-light theme-brand-border border text-slate-800 font-bold' : 'hover:bg-slate-50 bg-white border border-slate-200/60'}`;
-          li.innerHTML = `<div class="flex items-center gap-2 truncate min-w-0"><i class="fa-regular fa-file-lines ${isActive ? 'theme-brand-text' : 'text-slate-400'} text-xs flex-shrink-0"></i><span class="truncate text-xs font-medium text-slate-800">${escapeHtml(t.title)}</span></div><div class="flex items-center gap-1.5 flex-shrink-0"><span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-mono-num">${t.readCount || 0}回</span><button class="btn-del-text p-1.5 text-slate-400 hover:text-rose-600 rounded-lg"><i class="fa-solid fa-trash-can text-xs pointer-events-none"></i></button></div>`;
+          li.innerHTML = `<div class="flex items-center gap-2 truncate min-w-0"><i class="fa-regular fa-file-lines ${isActive ? 'theme-brand-text' : 'text-slate-400'} text-xs flex-shrink-0"></i><span class="truncate text-xs font-medium text-slate-800">${escapeHtml(t.title)}</span></div><div class="flex items-center gap-1 flex-shrink-0"><span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-mono-num">${t.readCount || 0}回</span><button title="名前変更" class="btn-edit-text p-1.5 text-slate-400 hover:text-slate-700 rounded-lg"><i class="fa-solid fa-pen-to-square text-xs pointer-events-none"></i></button><button title="削除" class="btn-del-text p-1.5 text-slate-400 hover:text-rose-600 rounded-lg"><i class="fa-solid fa-trash-can text-xs pointer-events-none"></i></button></div>`;
           li.onclick = (e) => { e.stopPropagation(); standaloneSelectedTextId = t.id; document.getElementById('standalone-active-title').textContent = `📖 ${t.title}`; document.getElementById('standalone-word-count').value = t.wordCount || 150; document.getElementById('standalone-read-count').textContent = t.readCount + 1; renderStandaloneTimerTree(); renderStandaloneTimerHistoryList(); };
+          li.querySelector('.btn-edit-text').onclick = (e) => { e.preventDefault(); e.stopPropagation(); openEditNameModal('text', t.id); };
           li.querySelector('.btn-del-text').onclick = (e) => { e.preventDefault(); e.stopPropagation(); deleteTarget = { type: 'text', id: t.id }; document.getElementById('delete-modal-heading').textContent = "教材を削除しますか？"; document.getElementById('delete-target-title').textContent = `「${t.title}」`; document.getElementById('modal-delete').classList.remove('hidden'); };
           ul.appendChild(li);
         });
